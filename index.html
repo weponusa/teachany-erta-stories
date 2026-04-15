@@ -3,1088 +3,1273 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="course-id" content="chinese-erta-stories">
-<meta name="course-node" content="erta-stories">
-<meta name="course-subject" content="chinese">
-<meta name="course-title" content="朝花夕拾">
-<meta name="course-prereqs" content="narrative-reading">
-<meta name="course-next" content="novel-reading,prose-reading">
-<title>朝花夕拾 | 初中语文 · 七年级名著导读</title>
+<meta name="course-id" content="history-sanguo-sui-tang">
+<meta name="course-node" content="sanguo-sui-tang">
+<meta name="course-subject" content="history">
+<meta name="course-title" content="三国两晋南北朝至隋唐">
+<meta name="course-prereqs" content="">
+<meta name="course-next" content="">
+<title>三国两晋南北朝至隋唐 — 初中历史互动课件</title>
+
+<!-- TeachAnyAdaptive Engine -->
+<script>
+const TeachAnyAdaptive = (() => {
+  const STORAGE_KEY = 'teachany_mastery';
+  function getMastery() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch { return {}; } }
+  function saveMastery(data) { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
+  function getNodeMastery(nodeId) { return getMastery()[nodeId]?.level || 0; }
+  function updateMastery(nodeId, correct, bloomLevel = 1) {
+    const data = getMastery();
+    const prev = data[nodeId]?.level || 0;
+    const weight = 0.1 + (bloomLevel - 1) * 0.04;
+    const score = correct ? 1 : 0;
+    const newLevel = Math.min(1, Math.max(0, prev * (1 - weight) + score * weight));
+    data[nodeId] = { level: Math.round(newLevel * 1000) / 1000, attempts: (data[nodeId]?.attempts || 0) + 1, lastCorrect: correct, lastAttempt: Date.now(), bloomMax: Math.max(data[nodeId]?.bloomMax || 0, correct ? bloomLevel : 0) };
+    saveMastery(data); return data[nodeId];
+  }
+  function checkPrerequisites(prereqIds, threshold = 0.5) { const gaps = prereqIds.filter(id => getNodeMastery(id) < threshold); return { met: gaps.length === 0, gaps }; }
+  function decideBranch(nodeId, prereqIds = []) { const prereqCheck = checkPrerequisites(prereqIds); if (!prereqCheck.met) return 'review-prereq'; const mastery = getNodeMastery(nodeId); if (mastery < 0.3) return 'scaffold'; if (mastery >= 0.8) return 'challenge'; return 'normal'; }
+  return { getNodeMastery, updateMastery, checkPrerequisites, decideBranch, getMastery };
+})();
+
+const TeachAnyProgress = (() => {
+  function getKey(courseId) { return `teachany_progress_${courseId}`; }
+  function getProgress(courseId) { try { return JSON.parse(localStorage.getItem(getKey(courseId)) || '{}'); } catch { return {}; } }
+  function saveProgress(courseId, data) { const existing = getProgress(courseId); const merged = { ...existing, ...data, lastUpdated: Date.now() }; localStorage.setItem(getKey(courseId), JSON.stringify(merged)); }
+  function completeModule(courseId, moduleId, result = {}) {
+    const progress = getProgress(courseId);
+    if (!progress.modules) progress.modules = {};
+    progress.modules[moduleId] = { completed: true, completedAt: Date.now(), score: result.score || 0, total: result.totalQuestions || 0, bloom: result.bloomLevel || 1 };
+    const totalModules = document.querySelectorAll('[data-module-id]').length;
+    const completedCount = Object.values(progress.modules).filter(m => m.completed).length;
+    progress.completionPercent = Math.round((completedCount / totalModules) * 100);
+    saveProgress(courseId, progress);
+  }
+  function getGlobalStats() { try { return JSON.parse(localStorage.getItem('teachany_stats') || '{}'); } catch { return {}; } }
+  function updateGlobalStats() {
+    const stats = getGlobalStats();
+    const today = new Date().toISOString().slice(0, 10);
+    const lastDate = stats.lastActiveDate;
+    if (lastDate === today) { /* already active */ } else { const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10); stats.streak = (lastDate === yesterday) ? (stats.streak || 0) + 1 : 1; stats.lastActiveDate = today; }
+    stats.totalSessions = (stats.totalSessions || 0) + 1;
+    stats.maxStreak = Math.max(stats.maxStreak || 0, stats.streak);
+    localStorage.setItem('teachany_stats', JSON.stringify(stats)); return stats;
+  }
+  function restoreScrollPosition(courseId) { const pos = localStorage.getItem(`teachany_scroll_${courseId}`); if (pos) { requestAnimationFrame(() => window.scrollTo(0, parseInt(pos))); } }
+  function saveScrollPosition(courseId) { localStorage.setItem(`teachany_scroll_${courseId}`, String(window.scrollY)); }
+  return { getProgress, saveProgress, completeModule, getGlobalStats, updateGlobalStats, restoreScrollPosition, saveScrollPosition };
+})();
+</script>
+
 <style>
-/* ========== Middle School Fresh Theme ========== */
 :root {
   --bg: #f8fafc;
-  --card: #ffffff;
   --primary: #3b82f6;
   --secondary: #06b6d4;
   --accent: #f59e0b;
-  --success: #10b981;
-  --danger: #ef4444;
+  --card: #ffffff;
   --text: #1e293b;
   --text-secondary: #64748b;
+  --success: #10b981;
+  --error: #ef4444;
   --border: #e2e8f0;
-  --shadow: 0 2px 12px rgba(0,0,0,.06);
-  --radius: 14px;
 }
-* { margin:0; padding:0; box-sizing:border-box; }
-body { font-family: -apple-system,'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif; background:var(--bg); color:var(--text); line-height:1.85; font-size:15px; }
 
-/* Sticky Nav */
-.nav-sticky { position:sticky; top:0; z-index:100; background:rgba(255,255,255,.95); backdrop-filter:blur(12px); border-bottom:1px solid var(--border); padding:10px 20px; display:flex; align-items:center; gap:14px; font-size:13px; box-shadow:0 1px 4px rgba(0,0,0,.04); }
-.nav-sticky .brand { font-weight:800; color:var(--primary); font-size:15px; }
-.nav-sticky a { color:var(--text-secondary); text-decoration:none; transition:color .2s; white-space:nowrap; }
-.nav-sticky a:hover { color:var(--primary); }
-.nav-progress { flex:1; height:3px; background:#e2e8f0; border-radius:2px; overflow:hidden; max-width:180px; }
-.nav-progress-fill { height:100%; width:0%; background:linear-gradient(90deg,var(--primary),var(--secondary)); transition:width .5s; border-radius:2px; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
-/* TTS Controls in Nav */
-.tts-controls { display:flex; align-items:center; gap:6px; }
-.tts-btn { width:32px; height:32px; border-radius:50%; border:1.5px solid var(--border); background:var(--card); cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:14px; transition:all .2s; }
-.tts-btn:hover { border-color:var(--primary); background:rgba(59,130,246,.06); }
-.tts-btn.playing { border-color:var(--primary); background:rgba(59,130,246,.12); color:var(--primary); }
-.tts-speed { font-size:11px; color:var(--text-secondary); min-width:28px; text-align:center; cursor:pointer; font-weight:600; }
-.tts-speed:hover { color:var(--primary); }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.8;
+  font-size: 15px;
+}
 
 /* Hero */
-.hero { text-align:center; padding:44px 20px 36px; background:linear-gradient(135deg,rgba(59,130,246,.06) 0%,rgba(6,182,212,.06) 50%,rgba(245,158,11,.04) 100%); border-bottom:1px solid var(--border); }
-.hero h1 { font-size:30px; font-weight:800; letter-spacing:.5px; margin-bottom:8px; background:linear-gradient(135deg,var(--primary),var(--secondary)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
-.hero .subtitle { color:var(--text-secondary); font-size:14px; margin-bottom:14px; }
-.hero .tags { display:flex; justify-content:center; gap:10px; flex-wrap:wrap; }
-.tag { padding:4px 14px; border-radius:20px; font-size:12px; font-weight:600; }
-.tag-subj { background:rgba(59,130,246,.1); color:var(--primary); border:1px solid rgba(59,130,246,.2); }
-.tag-grade { background:rgba(6,182,212,.1); color:var(--secondary); border:1px solid rgba(6,182,212,.2); }
-.tag-type { background:rgba(16,185,129,.1); color:var(--success); border:1px solid rgba(16,185,129,.2); }
+.hero {
+  background: linear-gradient(135deg, #1e3a5f 0%, #0f172a 100%);
+  color: white;
+  padding: 60px 24px 80px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+.hero-emoji { font-size: 56px; margin-bottom: 16px; }
+.hero h1 { font-size: 2rem; font-weight: 900; margin-bottom: 8px; }
+.hero-sub { color: #94a3b8; font-size: 1rem; margin-bottom: 24px; }
+.hero-tags { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+.tag { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+.tag-subject { background: rgba(59,130,246,0.2); color: #93c5fd; }
+.tag-grade { background: rgba(16,185,129,0.2); color: #6ee7b7; }
+.tag-type { background: rgba(245,158,11,0.2); color: #fcd34d; }
 
-/* Container */
-.container { max-width:880px; margin:0 auto; padding:0 20px; }
+/* Streak */
+#streak-display {
+  position: absolute; top: 16px; right: 20px;
+  display: flex; align-items: center; gap: 4px;
+  background: rgba(255,255,255,0.1); padding: 6px 14px; border-radius: 20px;
+  font-size: 14px; font-weight: 600;
+}
+#streak-display .streak-flame { font-size: 18px; }
 
-/* Section */
-.section { margin:36px 0; }
-.section-title { font-size:21px; font-weight:700; margin-bottom:16px; display:flex; align-items:center; gap:10px; color:var(--text); }
-.section-title .num { display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px; border-radius:50%; background:linear-gradient(135deg,var(--primary),var(--secondary)); color:#fff; font-size:13px; font-weight:700; }
-.section-title .speak-btn { width:26px; height:26px; border-radius:50%; border:1px solid var(--border); background:transparent; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; font-size:13px; transition:all .2s; margin-left:4px; }
-.section-title .speak-btn:hover { border-color:var(--primary); background:rgba(59,130,246,.06); }
+/* Nav */
+.nav-bar {
+  background: white; border-bottom: 1px solid var(--border);
+  padding: 0 24px; display: flex; gap: 0; overflow-x: auto;
+  position: sticky; top: 0; z-index: 100;
+}
+.nav-item {
+  padding: 14px 20px; font-size: 14px; font-weight: 600; color: var(--text-secondary);
+  cursor: pointer; border-bottom: 3px solid transparent; white-space: nowrap;
+  transition: all 0.2s;
+}
+.nav-item:hover { color: var(--primary); }
+.nav-item.active { color: var(--primary); border-bottom-color: var(--primary); }
+
+/* Sections */
+.section { display: none; padding: 32px 24px 60px; max-width: 900px; margin: 0 auto; }
+.section.active { display: block; }
 
 /* Cards */
-.card { background:var(--card); border-radius:var(--radius); padding:22px; margin-bottom:14px; border:1px solid var(--border); box-shadow:var(--shadow); transition:transform .15s,box-shadow .15s; }
-.card:hover { transform:translateY(-1px); box-shadow:0 4px 20px rgba(0,0,0,.08); }
-.card h3 { font-size:16px; color:var(--primary); margin-bottom:8px; display:flex; align-items:center; gap:8px; }
-.card p { color:var(--text-secondary); margin-bottom:6px; font-size:14.5px; }
+.card {
+  background: var(--card); border-radius: 14px; padding: 24px;
+  margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  border: 1px solid var(--border);
+}
+.card-title {
+  font-size: 1.1rem; font-weight: 700; margin-bottom: 12px;
+  display: flex; align-items: center; gap: 8px;
+}
+.card-title .num {
+  background: var(--primary); color: white; width: 28px; height: 28px;
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700;
+}
 
-/* Objectives */
-.obj-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:10px; }
-.obj-item { background:var(--card); border-radius:12px; padding:14px; border:1px solid var(--border); border-left:3px solid var(--primary); }
-.obj-item:nth-child(2) { border-left-color:var(--secondary); }
-.obj-item:nth-child(3) { border-left-color:var(--accent); }
-.obj-item:nth-child(4) { border-left-color:var(--success); }
-.obj-item:nth-child(5) { border-left-color:#8b5cf6; }
-.obj-item .obj-icon { font-size:20px; margin-right:6px; }
-.obj-item strong { color:var(--text); font-size:14px; }
+/* ABT Banner */
+.abt-banner {
+  background: linear-gradient(135deg, #1e3a5f, #0f172a);
+  color: white; border-radius: 14px; padding: 28px;
+  margin-bottom: 24px; position: relative; overflow: hidden;
+}
+.abt-banner::before {
+  content: 'And'; position: absolute; top: 10px; left: 14px;
+  font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 1px;
+}
+.abt-banner::after {
+  content: 'But'; position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
+  font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 1px;
+}
+.abt-text { font-size: 1.05rem; line-height: 1.9; padding-left: 40px; }
+.abt-text strong { color: #fbbf24; }
+.abt-text em { color: #93c5fd; font-style: normal; }
 
-/* ABT Box */
-.abt-box { background:linear-gradient(135deg,rgba(59,130,246,.04),rgba(6,182,212,.04)); border-radius:var(--radius); padding:22px; border:1px solid var(--border); margin:14px 0; }
-.abt-row { display:flex; gap:14px; margin-bottom:10px; align-items:flex-start; }
-.abt-label { min-width:50px; padding:3px 10px; border-radius:6px; font-size:12px; font-weight:700; text-align:center; flex-shrink:0; }
-.abt-and { background:rgba(16,185,129,.12); color:var(--success); }
-.abt-but { background:rgba(239,68,68,.12); color:var(--danger); }
-.abt-therefore { background:rgba(59,130,246,.12); color:var(--primary); }
-.abt-content { color:var(--text-secondary); font-size:14px; }
+/* Learning Objectives */
+.obj-list { list-style: none; display: grid; gap: 10px; }
+.obj-item {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 12px 16px; background: #f8fafc; border-radius: 10px;
+  border-left: 4px solid var(--primary);
+}
+.obj-item .check { color: var(--success); font-size: 18px; flex-shrink: 0; }
+.obj-item .obj-text { font-size: 14px; color: var(--text); }
 
-/* Quote Box */
-.quote-box { background:linear-gradient(135deg,rgba(245,158,11,.04),rgba(59,130,246,.03)); border-left:4px solid var(--accent); border-radius:0 var(--radius) var(--radius) 0; padding:18px 22px; margin:14px 0; }
-.quote-box .quote-text { font-style:italic; font-size:15px; color:var(--text); line-height:1.9; }
-.quote-box .quote-source { font-size:12px; color:var(--text-secondary); margin-top:6px; text-align:right; }
+/* Timeline */
+.timeline-wrap { position: relative; padding: 20px 0; }
+.timeline-line {
+  position: absolute; left: 20px; top: 0; bottom: 0; width: 3px;
+  background: linear-gradient(to bottom, var(--primary), var(--secondary));
+  border-radius: 2px;
+}
+.tl-item {
+  position: relative; padding-left: 56px; margin-bottom: 28px;
+}
+.tl-dot {
+  position: absolute; left: 10px; top: 6px; width: 22px; height: 22px;
+  border-radius: 50%; border: 3px solid white; box-shadow: 0 0 0 2px var(--primary);
+  background: var(--primary); z-index: 1;
+}
+.tl-dot.active { background: var(--success); box-shadow: 0 0 0 2px var(--success); }
+.tl-year { font-size: 12px; font-weight: 700; color: var(--primary); margin-bottom: 2px; }
+.tl-title { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+.tl-desc { font-size: 13px; color: var(--text-secondary); }
 
-/* Essay Timeline */
-.essay-timeline { position:relative; padding-left:28px; }
-.essay-timeline::before { content:''; position:absolute; left:10px; top:0; bottom:0; width:2px; background:linear-gradient(180deg,var(--primary),var(--secondary)); }
-.essay-item { position:relative; margin-bottom:16px; }
-.essay-item::before { content:''; position:absolute; left:-22px; top:6px; width:10px; height:10px; border-radius:50%; background:var(--card); border:2.5px solid var(--primary); z-index:1; }
-.essay-item .essay-title { font-weight:700; font-size:15px; color:var(--text); cursor:pointer; transition:color .2s; }
-.essay-item .essay-title:hover { color:var(--primary); }
-.essay-item .essay-desc { font-size:13px; color:var(--text-secondary); margin-top:2px; display:none; }
-.essay-item.expanded .essay-desc { display:block; }
-.essay-item.expanded::before { background:var(--primary); }
+/* Drag Sortable */
+.sortable-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.sortable-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px 18px; background: white; border-radius: 10px;
+  border: 2px solid var(--border); cursor: grab; user-select: none;
+  transition: all 0.2s; font-size: 14px; font-weight: 600;
+}
+.sortable-item:hover { border-color: var(--primary); box-shadow: 0 2px 8px rgba(59,130,246,0.15); }
+.sortable-item.dragging { opacity: 0.5; border-color: var(--primary); background: #eff6ff; }
+.sortable-item .handle { color: var(--text-secondary); font-size: 18px; flex-shrink: 0; }
+.sortable-item.correct { border-color: var(--success); background: #f0fdf4; color: var(--success); }
+.sortable-item.wrong { border-color: var(--error); background: #fef2f2; }
 
-/* Character Card */
-.char-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:10px; }
-.char-card { background:var(--card); border-radius:12px; padding:16px; border:1px solid var(--border); text-align:center; transition:all .2s; cursor:pointer; }
-.char-card:hover { border-color:var(--primary); box-shadow:0 4px 16px rgba(59,130,246,.1); }
-.char-card .char-emoji { font-size:36px; margin-bottom:6px; }
-.char-card .char-name { font-weight:700; font-size:15px; color:var(--text); }
-.char-card .char-role { font-size:12px; color:var(--text-secondary); margin-top:2px; }
-.char-card .char-detail { font-size:13px; color:var(--text-secondary); margin-top:8px; display:none; text-align:left; line-height:1.7; }
-.char-card.expanded .char-detail { display:block; }
+/* Quiz */
+.quiz-question { font-size: 15px; font-weight: 700; margin-bottom: 16px; }
+.quiz-options { display: flex; flex-direction: column; gap: 10px; }
+.quiz-option {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 16px; border-radius: 10px; border: 2px solid var(--border);
+  cursor: pointer; transition: all 0.2s; font-size: 14px;
+}
+.quiz-option:hover { border-color: var(--primary); background: #eff6ff; }
+.quiz-option.selected { border-color: var(--primary); background: #dbeafe; }
+.quiz-option .opt-letter {
+  width: 26px; height: 26px; border-radius: 50%; background: var(--border);
+  display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;
+  flex-shrink: 0;
+}
+.quiz-option.correct { border-color: var(--success); background: #f0fdf4; }
+.quiz-option.correct .opt-letter { background: var(--success); color: white; }
+.quiz-option.wrong { border-color: var(--error); background: #fef2f2; }
+.quiz-option.wrong .opt-letter { background: var(--error); color: white; }
 
-/* Annotation Practice */
-.annotate-box { background:var(--card); border-radius:var(--radius); padding:20px; border:1px solid var(--border); margin:14px 0; }
-.annotate-text { font-size:15px; line-height:2.2; color:var(--text); position:relative; }
-.annotate-text .hl { background:rgba(245,158,11,.15); border-bottom:2px solid var(--accent); cursor:pointer; transition:background .2s; padding:0 2px; }
-.annotate-text .hl:hover { background:rgba(245,158,11,.3); }
-.annotate-text .hl.active { background:rgba(59,130,246,.15); border-bottom-color:var(--primary); }
-.annotate-hint { margin-top:10px; padding:10px 14px; border-radius:8px; background:rgba(59,130,246,.06); font-size:13px; color:var(--primary); display:none; }
-.annotate-hint.show { display:block; }
+/* Feedback */
+.feedback {
+  padding: 16px; border-radius: 10px; margin-top: 16px;
+  display: none; font-size: 14px; line-height: 1.7;
+}
+.feedback.show { display: block; }
+.feedback.correct { background: #f0fdf4; border-left: 4px solid var(--success); color: #065f46; }
+.feedback.wrong { background: #fef2f2; border-left: 4px solid var(--error); color: #991b1b; }
 
-/* Comparison Columns */
-.compare-cols { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
-.compare-col { background:var(--card); border-radius:var(--radius); padding:18px; border:1px solid var(--border); }
-.compare-col h4 { font-size:14px; font-weight:700; margin-bottom:8px; }
-.compare-col.child h4 { color:var(--success); }
-.compare-col.adult h4 { color:var(--primary); }
-.compare-col ul { list-style:none; padding:0; }
-.compare-col li { padding:4px 0; font-size:13.5px; color:var(--text-secondary); }
-.compare-col li::before { content:'•'; margin-right:6px; font-weight:700; }
-.compare-col.child li::before { color:var(--success); }
-.compare-col.adult li::before { color:var(--primary); }
+/* Buttons */
+.btn {
+  padding: 12px 28px; border-radius: 10px; border: none; cursor: pointer;
+  font-size: 14px; font-weight: 700; transition: all 0.2s;
+}
+.btn-primary { background: var(--primary); color: white; }
+.btn-primary:hover { background: #2563eb; box-shadow: 0 4px 12px rgba(59,130,246,0.3); }
+.btn-primary:disabled { background: var(--border); color: var(--text-secondary); cursor: not-allowed; }
+.btn-secondary { background: var(--border); color: var(--text); }
+.btn-success { background: var(--success); color: white; }
 
-/* Quiz Styles */
-.quiz-option { display:block; background:var(--card); border:1.5px solid var(--border); border-radius:10px; padding:12px 16px; margin:6px 0; cursor:pointer; transition:all .2s; font-size:14px; color:var(--text-secondary); }
-.quiz-option:hover { border-color:var(--primary); background:rgba(59,130,246,.04); color:var(--text); }
-.quiz-option.selected { border-color:var(--primary); background:rgba(59,130,246,.08); color:var(--text); }
-.quiz-option.correct { border-color:var(--success); background:rgba(16,185,129,.08); color:var(--success); }
-.quiz-option.wrong { border-color:var(--danger); background:rgba(239,68,68,.08); color:var(--danger); }
-.quiz-feedback { margin-top:8px; padding:10px 14px; border-radius:8px; font-size:13px; display:none; }
-.quiz-feedback.show { display:block; }
-.feedback-correct { background:rgba(16,185,129,.06); border-left:3px solid var(--success); color:#047857; }
-.feedback-wrong { background:rgba(239,68,68,.06); border-left:3px solid var(--danger); color:#b91c1c; }
-.btn { display:inline-block; padding:9px 22px; border-radius:8px; border:none; cursor:pointer; font-size:13.5px; font-weight:600; transition:all .2s; }
-.btn-primary { background:linear-gradient(135deg,var(--primary),#2563eb); color:#fff; }
-.btn-primary:hover { transform:translateY(-1px); box-shadow:0 4px 14px rgba(59,130,246,.3); }
-.btn-secondary { background:rgba(100,116,139,.12); color:var(--text-secondary); }
+/* Progress bar */
+.progress-bar-wrap { background: var(--border); border-radius: 10px; height: 10px; margin: 16px 0; overflow: hidden; }
+.progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--secondary)); border-radius: 10px; transition: width 0.5s ease; }
 
-/* Writing Scaffold */
-.scaffold-box { background:var(--card); border-radius:var(--radius); padding:20px; border:1px solid var(--border); }
-.scaffold-level { margin-bottom:14px; padding:12px 16px; border-radius:10px; border:1px solid var(--border); }
-.scaffold-level.l1 { background:rgba(16,185,129,.04); border-color:rgba(16,185,129,.2); }
-.scaffold-level.l2 { background:rgba(59,130,246,.04); border-color:rgba(59,130,246,.2); }
-.scaffold-level.l3 { background:rgba(245,158,11,.04); border-color:rgba(245,158,11,.2); }
-.scaffold-level .level-tag { font-size:11px; font-weight:700; padding:2px 8px; border-radius:4px; display:inline-block; margin-bottom:6px; }
-.l1 .level-tag { background:rgba(16,185,129,.12); color:var(--success); }
-.l2 .level-tag { background:rgba(59,130,246,.12); color:var(--primary); }
-.l3 .level-tag { background:rgba(245,158,11,.12); color:var(--accent); }
-.scaffold-level p { font-size:13.5px; color:var(--text-secondary); line-height:1.8; }
-textarea { width:100%; min-height:100px; border:1.5px solid var(--border); border-radius:8px; padding:10px 14px; font-size:14px; font-family:inherit; line-height:1.8; resize:vertical; transition:border-color .2s; }
-textarea:focus { outline:none; border-color:var(--primary); }
+/* Source Card */
+.source-card {
+  background: #fffbf0; border-radius: 10px; padding: 18px;
+  border-left: 4px solid var(--accent); margin: 12px 0;
+}
+.source-label { font-size: 11px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+.source-text { font-size: 13px; color: #92400e; line-height: 1.8; font-style: italic; }
 
-/* Tab for sections */
-.tab-group { display:flex; gap:4px; margin-bottom:14px; flex-wrap:wrap; }
-.tab-btn { padding:7px 16px; border-radius:8px; border:1px solid var(--border); background:var(--card); color:var(--text-secondary); cursor:pointer; font-size:13px; font-weight:600; transition:all .2s; }
-.tab-btn.active { background:rgba(59,130,246,.1); color:var(--primary); border-color:var(--primary); }
-.tab-panel { display:none; }
-.tab-panel.active { display:block; animation:fadeInUp .3s ease; }
+/* Compare columns */
+.compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 16px 0; }
+.compare-col { background: #f8fafc; border-radius: 10px; padding: 16px; }
+.compare-col h4 { font-size: 14px; font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+.compare-col ul { list-style: none; font-size: 13px; color: var(--text-secondary); }
+.compare-col ul li { padding: 4px 0; border-bottom: 1px solid var(--border); }
+.compare-col ul li:last-child { border-bottom: none; }
 
-/* Knowledge Graph */
-.kg-container { background:var(--card); border-radius:var(--radius); padding:18px; border:1px solid var(--border); overflow-x:auto; }
+/* Summary table */
+.summary-table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
+.summary-table th { background: var(--primary); color: white; padding: 10px 12px; text-align: left; font-weight: 700; }
+.summary-table td { padding: 10px 12px; border-bottom: 1px solid var(--border); }
+.summary-table tr:nth-child(even) td { background: #f8fafc; }
 
-/* Score */
-.score-display { text-align:center; padding:20px; }
-.score-circle { width:110px; height:110px; border-radius:50%; border:4px solid var(--primary); display:flex; align-items:center; justify-content:center; font-size:30px; font-weight:800; color:var(--primary); margin:0 auto 10px; }
+/* Bottom nav */
+.bottom-nav {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  background: white; border-top: 1px solid var(--border);
+  padding: 12px 24px; display: flex; justify-content: space-between;
+  align-items: center; z-index: 200;
+}
+.bottom-nav .nav-hint { font-size: 12px; color: var(--text-secondary); }
+.bottom-nav .progress-text { font-size: 12px; color: var(--text-secondary); }
 
-/* Drag & Drop */
-.sortable-list { list-style:none; padding:0; }
-.sortable-item { background:var(--card); border:1.5px solid var(--border); border-radius:8px; padding:10px 14px; margin:5px 0; cursor:grab; display:flex; align-items:center; gap:10px; transition:all .2s; user-select:none; font-size:14px; }
-.sortable-item:hover { border-color:var(--secondary); background:rgba(6,182,212,.04); }
-.sortable-item.dragging { opacity:.5; border-style:dashed; }
-.sortable-item .drag-handle { color:var(--text-secondary); font-size:16px; cursor:grab; }
-.sortable-item.correct-order { border-color:var(--success); background:rgba(16,185,129,.04); }
-.sortable-item.wrong-order { border-color:var(--danger); background:rgba(239,68,68,.04); }
+/* Post-test banner */
+.post-test-banner {
+  background: linear-gradient(135deg, #065f46, #047857);
+  color: white; border-radius: 14px; padding: 28px; text-align: center;
+  margin: 20px 0;
+}
+.post-test-banner h3 { font-size: 1.2rem; margin-bottom: 8px; }
+.post-test-banner p { font-size: 13px; opacity: 0.8; margin-bottom: 16px; }
 
-/* Rubric Table */
-.rubric-table { width:100%; border-collapse:collapse; font-size:13px; margin:12px 0; }
-.rubric-table th { background:rgba(59,130,246,.08); color:var(--primary); padding:8px 10px; text-align:left; font-weight:700; border:1px solid var(--border); }
-.rubric-table td { padding:8px 10px; border:1px solid var(--border); color:var(--text-secondary); vertical-align:top; }
+/* Score circle */
+.score-circle {
+  width: 100px; height: 100px; border-radius: 50%;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  margin: 0 auto 16px; font-weight: 900;
+}
+.score-circle .score-num { font-size: 2rem; }
+.score-circle .score-label { font-size: 11px; opacity: 0.7; }
 
-/* TTS Active Indicator */
-.tts-active-section { position:relative; }
-.tts-active-section::after { content:'🔊 朗读中'; position:absolute; top:0; right:0; font-size:11px; color:var(--primary); background:rgba(59,130,246,.08); padding:2px 8px; border-radius:4px; }
+/* Section header */
+.section-header {
+  display: flex; align-items: center; gap: 12px; margin-bottom: 24px;
+  padding-bottom: 16px; border-bottom: 2px solid var(--border);
+}
+.section-header h2 { font-size: 1.3rem; font-weight: 900; }
+.section-header .emoji { font-size: 28px; }
+
+/* Level badge */
+.level-badge {
+  display: inline-block; padding: 2px 10px; border-radius: 20px;
+  font-size: 11px; font-weight: 700;
+}
+.level-1 { background: #dbeafe; color: #1d4ed8; }
+.level-2 { background: #fef3c7; color: #92400e; }
+.level-3 { background: #d1fae5; color: #065f46; }
+
+/* Concept box */
+.concept-box {
+  background: linear-gradient(135deg, #eff6ff, #f0f9ff);
+  border-radius: 10px; padding: 16px; margin: 12px 0;
+  border: 1px solid #bfdbfe;
+}
+.concept-box h4 { font-size: 13px; font-weight: 700; color: var(--primary); margin-bottom: 8px; }
+.concept-box p { font-size: 13px; color: var(--text-secondary); }
+
+/* Map SVG */
+.map-wrap { background: #1a1a2e; border-radius: 14px; padding: 16px; margin: 16px 0; text-align: center; }
+.map-wrap svg { max-width: 100%; border-radius: 10px; }
 
 /* Responsive */
-@media(max-width:600px) {
-  .hero h1 { font-size:24px; }
-  .container { padding:0 14px; }
-  .card { padding:16px; }
-  .abt-row { flex-direction:column; }
-  .nav-sticky { flex-wrap:wrap; gap:6px; padding:8px 12px; }
-  .compare-cols { grid-template-columns:1fr; }
-  .char-grid { grid-template-columns:1fr 1fr; }
+@media (max-width: 600px) {
+  .compare-grid { grid-template-columns: 1fr; }
+  .hero h1 { font-size: 1.5rem; }
 }
-@keyframes fadeInUp { from{opacity:0;transform:translateY(12px);} to{opacity:1;transform:translateY(0);} }
-.fade-in-up { animation:fadeInUp .4s ease forwards; }
-@keyframes pulse { 0%,100%{transform:scale(1);} 50%{transform:scale(1.04);} }
 </style>
 </head>
 <body>
 
-<!-- ===== STICKY NAV ===== -->
-<nav class="nav-sticky" id="mainNav">
-  <span class="brand">📖 朝花夕拾</span>
-  <div class="nav-progress"><div class="nav-progress-fill" id="navProgress"></div></div>
-  <a href="#objectives">目标</a>
-  <a href="#pretest">前测</a>
-  <a href="#m1">概述</a>
-  <a href="#m2">篇目</a>
-  <a href="#m3">人物</a>
-  <a href="#m4">手法</a>
-  <a href="#m5">视角</a>
-  <a href="#m6">批注</a>
-  <a href="#task">任务</a>
-  <a href="#posttest">后测</a>
-  <div class="tts-controls">
-    <button class="tts-btn" id="ttsPlayAll" title="朗读全课" onclick="TeachAnyTTS.playAll()">▶️</button>
-    <button class="tts-btn" id="ttsStop" title="停止朗读" onclick="TeachAnyTTS.stop()">⏹</button>
-    <span class="tts-speed" id="ttsSpeed" title="调节语速" onclick="TeachAnyTTS.cycleSpeed()">1x</span>
+<!-- ========== HERO ========== -->
+<div class="hero">
+  <div id="streak-display">
+    <span class="streak-flame">🔥</span>
+    <span id="streak-count">0</span>
+    <span class="streak-label">天</span>
   </div>
-</nav>
-
-<!-- ===== HERO ===== -->
-<header class="hero">
-  <h1>📖 朝花夕拾</h1>
-  <div class="subtitle">Dawn Blossoms Plucked at Dusk — 鲁迅唯一一部回忆性散文集</div>
-  <div class="tags">
-    <span class="tag tag-subj">初中语文 · 七年级</span>
-    <span class="tag tag-grade">名著导读</span>
-    <span class="tag tag-type">整本书阅读</span>
+  <div class="hero-emoji">🏛️</div>
+  <h1>三国两晋南北朝至隋唐</h1>
+  <p class="hero-sub">从分裂到统一：220年—907年中国历史关键转型期</p>
+  <div class="hero-tags">
+    <span class="tag tag-subject">初中历史</span>
+    <span class="tag tag-grade">七/八年级</span>
+    <span class="tag tag-type">主题型 · 互动课件</span>
   </div>
-</header>
+</div>
 
-<div class="container">
+<!-- ========== NAV ========== -->
+<div class="nav-bar" id="mainNav">
+  <div class="nav-item active" data-target="overview">📋 课程概览</div>
+  <div class="nav-item" data-target="timeline">⏳ 朝代更替</div>
+  <div class="nav-item" data-target="module1">⚔️ 三国西晋</div>
+  <div class="nav-item" data-target="module2">🌀 南北朝</div>
+  <div class="nav-item" data-target="module3">🏛️ 隋朝统一</div>
+  <div class="nav-item" data-target="module4">✨ 贞观之治</div>
+  <div class="nav-item" data-target="posttest">🎯 综合测评</div>
+</div>
 
-<!-- ===== LEARNING OBJECTIVES ===== -->
-<section class="section" id="objectives">
-  <div class="section-title"><span class="num">🎯</span> 学习目标 <button class="speak-btn" onclick="TeachAnyTTS.speakSection('objectives')">🔊</button></div>
-  <div class="obj-grid">
-    <div class="obj-item"><span class="obj-icon">📝</span><strong>概括内容</strong><br><small style="color:var(--text-secondary)">用简洁语言概括10篇散文的主要内容</small></div>
-    <div class="obj-item"><span class="obj-icon">🔍</span><strong>分析手法</strong><br><small style="color:var(--text-secondary)">识别并分析人物刻画与叙事手法</small></div>
-    <div class="obj-item"><span class="obj-icon">👁️</span><strong>理解双视角</strong><br><small style="color:var(--text-secondary)">把握"童年之眼"与"中年之眼"的双重叙事视角</small></div>
-    <div class="obj-item"><span class="obj-icon">✍️</span><strong>批注仿写</strong><br><small style="color:var(--text-secondary)">完成关键段落的批注与仿写练习</small></div>
-    <div class="obj-item"><span class="obj-icon">💡</span><strong>感悟主题</strong><br><small style="color:var(--text-secondary)">理解"朝花"与"夕拾"的深层意涵</small></div>
-  </div>
-</section>
+<!-- ========== SECTION: OVERVIEW ========== -->
+<div class="section active" id="section-overview" data-module-id="overview">
 
-<!-- ===== PRE-TEST ===== -->
-<section class="section" id="pretest">
-  <div class="section-title"><span class="num">📋</span> 前测：你知道多少？ <button class="speak-btn" onclick="TeachAnyTTS.speakSection('pretest')">🔊</button></div>
-  <div class="card" id="pre-q1">
-    <h3>❓ 第1题</h3>
-    <p>《朝花夕拾》的作者是谁？这本书属于什么文体？</p>
-    <div class="quiz-option" onclick="selectPre(this,'pre-q1',true)">鲁迅的回忆性散文集</div>
-    <div class="quiz-option" onclick="selectPre(this,'pre-q1',false)">鲁迅的短篇小说集</div>
-    <div class="quiz-option" onclick="selectPre(this,'pre-q1',false)">周作人的随笔集</div>
-    <div class="quiz-feedback" id="pre-q1-fb"></div>
-  </div>
-  <div class="card" id="pre-q2">
-    <h3>❓ 第2题</h3>
-    <p>"朝花夕拾"这个书名的含义是什么？</p>
-    <div class="quiz-option" onclick="selectPre(this,'pre-q2',true)">早晨的花傍晚来捡拾——比喻晚年回忆童年往事</div>
-    <div class="quiz-option" onclick="selectPre(this,'pre-q2',false)">描写花从早到晚的变化</div>
-    <div class="quiz-option" onclick="selectPre(this,'pre-q2',false)">早上摘花晚上欣赏</div>
-    <div class="quiz-feedback" id="pre-q2-fb"></div>
-  </div>
-</section>
-
-<!-- ===== MODULE 1: ABT OVERVIEW ===== -->
-<section class="section" id="m1">
-  <div class="section-title"><span class="num">1</span> 走进《朝花夕拾》 <button class="speak-btn" onclick="TeachAnyTTS.speakSection('m1')">🔊</button></div>
-
-  <div class="abt-box">
-    <div class="abt-row">
-      <span class="abt-label abt-and">And</span>
-      <span class="abt-content">你已经读过不少记叙文，知道故事有"人物、情节、环境"三要素</span>
-    </div>
-    <div class="abt-row">
-      <span class="abt-label abt-but">But</span>
-      <span class="abt-content">散文不是讲故事，它"形散神聚"——看似东写西写，却有一条看不见的线串着。鲁迅的散文更特别：他写童年，笔调里却总藏着中年的叹息</span>
-    </div>
-    <div class="abt-row">
-      <span class="abt-label abt-therefore">Therefore</span>
-      <span class="abt-content">我们需要一种新的阅读方法——<strong>双视角阅读法</strong>：一只眼睛看"童年的鲁迅看到了什么"，另一只眼睛看"中年的鲁迅在想什么"</span>
+  <!-- ABT Banner -->
+  <div class="abt-banner">
+    <div class="abt-text">
+      <strong>你知道</strong>东汉末年各地诸侯割据，三国鼎立局面形成。<br>
+      <em>但是</em>你知道为什么近400年的分裂之后，隋朝能够重新统一中国？<br>
+      <strong>因此</strong>本课将通过朝代更替的时间线，分析统一背后的历史条件。
     </div>
   </div>
 
+  <!-- Learning Objectives -->
   <div class="card">
-    <h3>📚 基本信息速览</h3>
-    <p>🔹 <strong>原名</strong>：《旧事重提》（发表于《莽原》半月刊）</p>
-    <p>🔹 <strong>改名</strong>：1927年结集出版时改名为《朝花夕拾》</p>
-    <p>🔹 <strong>篇数</strong>：10篇散文</p>
-    <p>🔹 <strong>写作时间</strong>：1926年（鲁迅45岁，定居厦门期间）</p>
-    <p>🔹 <strong>内容范围</strong>：从童年（绍兴）到青年（南京、日本）的人生片段</p>
-    <p>🔹 <strong>文体</strong>：回忆性散文（兼具叙事与抒情，夹叙夹议）</p>
-  </div>
-
-  <div class="quote-box">
-    <div class="quote-text">"我常想在纷扰中寻出一点闲静来，然而委实不容易。目前是这么离奇，心里是这么芜杂。一个人做到只剩了回忆的时候，生涯大概总要算是无聊了罢，但有时竟会连回忆也没有。"</div>
-    <div class="quote-source">——鲁迅《朝花夕拾·小引》</div>
-  </div>
-</section>
-
-<!-- ===== MODULE 2: 10 ESSAYS ===== -->
-<section class="section" id="m2">
-  <div class="section-title"><span class="num">2</span> 十篇散文速览 <button class="speak-btn" onclick="TeachAnyTTS.speakSection('m2')">🔊</button></div>
-
-  <div class="tab-group">
-    <button class="tab-btn active" onclick="switchTab(event,'tab-child')">🌱 童年时光（5篇）</button>
-    <button class="tab-btn" onclick="switchTab(event,'tab-youth')">🎒 求学之路（3篇）</button>
-    <button class="tab-btn" onclick="switchTab(event,'tab-think')">💭 杂感人物（2篇）</button>
-  </div>
-
-  <div id="tab-child" class="tab-panel active">
-    <div class="essay-timeline">
-      <div class="essay-item" onclick="this.classList.toggle('expanded')">
-        <div class="essay-title">🐕 《狗·猫·鼠》—— 讨猫与爱鼠</div>
-        <div class="essay-desc">表面写对猫的厌恶，实则讽刺"正人君子"。追忆童年救养隐鼠的经历，展现幼年鲁迅的善良与好奇。<strong>关键词</strong>：讽刺、弱者同情</div>
-      </div>
-      <div class="essay-item" onclick="this.classList.toggle('expanded')">
-        <div class="essay-title">🌿 《阿长与〈山海经〉》—— 粗俗保姆的温情</div>
-        <div class="essay-desc">长妈妈睡相不好、规矩多、谋害了"我"的隐鼠——但恰恰是她买来了"我"日思夜想的《山海经》。"我"对她的情感从厌到敬的转变，是全文最动人的线索。<strong>关键词</strong>：欲扬先抑、底层人物</div>
-      </div>
-      <div class="essay-item" onclick="this.classList.toggle('expanded')">
-        <div class="essay-title">🏔️ 《从百草园到三味书屋》—— 最美童年双面</div>
-        <div class="essay-desc">百草园是自由天地（碧绿菜畦、鸣蝉黄蜂），三味书屋是规矩牢笼。但即使是书屋也有趣味——偷偷画画、先生读书入神时的可爱。<strong>关键词</strong>：对比、童心</div>
-      </div>
-      <div class="essay-item" onclick="this.classList.toggle('expanded')">
-        <div class="essay-title">🏥 《父亲的病》—— 庸医与悔恨</div>
-        <div class="essay-desc">两位"名医"故弄玄虚、勒索钱财，父亲最终病逝。结尾"叫魂"一节是鲁迅终生愧疚——他叫了，父亲却更痛苦了。<strong>关键词</strong>：批判、悔恨</div>
-      </div>
-      <div class="essay-item" onclick="this.classList.toggle('expanded')">
-        <div class="essay-title">🎆 《无常》—— 鬼比人可爱</div>
-        <div class="essay-desc">迎神赛会上的"无常"鬼，爽直、公道、有人情味。鲁迅借鬼讽刺人——"公正的裁判是在阴间"。<strong>关键词</strong>：借鬼讽人、民风</div>
-      </div>
-    </div>
-  </div>
-
-  <div id="tab-youth" class="tab-panel">
-    <div class="essay-timeline">
-      <div class="essay-item" onclick="this.classList.toggle('expanded')">
-        <div class="essay-title">🏫 《五猖会》—— 盼望与扫兴</div>
-        <div class="essay-desc">满心欢喜要去看五猖会，父亲却在此刻叫住"我"背《鉴略》。书背完了，会的兴致也全没了。以心理落差揭示封建教育对童心的扼杀。<strong>关键词</strong>：心理对比、封建教育</div>
-      </div>
-      <div class="essay-item" onclick="this.classList.toggle('expanded')">
-        <div class="essay-title">🔬 《琐记》—— 从南京到日本</div>
-        <div class="essay-desc">回忆南京求学（矿路学堂、水师学堂）再到日本留学的经历。写了衍太太的虚伪，也记录了追求新知的决心。<strong>关键词</strong>：求学、新知</div>
-      </div>
-      <div class="essay-item" onclick="this.classList.toggle('expanded')">
-        <div class="essay-title">🎓 《藤野先生》—— 异国恩师</div>
-        <div class="essay-desc">在日本仙台学医，遇到了没有民族偏见的藤野先生。看幻灯片事件后决定弃医从文——"凡是愚弱的国民，即使体格如何健全，也只能做毫无意义的示众的材料"。<strong>关键词</strong>：弃医从文、民族意识</div>
-      </div>
-    </div>
-  </div>
-
-  <div id="tab-think" class="tab-panel">
-    <div class="essay-timeline">
-      <div class="essay-item" onclick="this.classList.toggle('expanded')">
-        <div class="essay-title">📖 《二十四孝图》—— 批判虚伪孝道</div>
-        <div class="essay-desc">童年看"二十四孝"图画的困惑与恐惧——"老莱娱亲"做作，"郭巨埋儿"残忍。以儿童视角揭示封建孝道的反人性。<strong>关键词</strong>：儿童视角、反封建</div>
-      </div>
-      <div class="essay-item" onclick="this.classList.toggle('expanded')">
-        <div class="essay-title">✈️ 《范爱农》—— 一个不合时宜的人</div>
-        <div class="essay-desc">范爱农孤傲、倔强、不合群——鲁迅起初讨厌他，后来却深深理解他。辛亥革命后范爱农的悲惨结局，是对时代的控诉。<strong>关键词</strong>：知识分子、时代悲剧</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="card" style="margin-top:14px">
-    <h3>🧩 ConcepTest：哪篇散文？</h3>
-    <p>"他有一条赤绳，上面挂着许多小铃……他一见我，便伸手向我要钱。"这段描写出自哪篇？</p>
-    <div class="quiz-option" onclick="selectConcept(this,'m2-c1',false)">A. 《阿长与〈山海经〉》</div>
-    <div class="quiz-option" onclick="selectConcept(this,'m2-c1',true)">B. 《无常》</div>
-    <div class="quiz-option" onclick="selectConcept(this,'m2-c1',false)">C. 《五猖会》</div>
-    <div class="quiz-feedback" id="m2-c1-fb"></div>
-  </div>
-</section>
-
-<!-- ===== MODULE 3: CHARACTERS ===== -->
-<section class="section" id="m3">
-  <div class="section-title"><span class="num">3</span> 人物画廊 <button class="speak-btn" onclick="TeachAnyTTS.speakSection('m3')">🔊</button></div>
-
-  <div class="char-grid">
-    <div class="char-card" onclick="this.classList.toggle('expanded')">
-      <div class="char-emoji">👩</div>
-      <div class="char-name">阿长（长妈妈）</div>
-      <div class="char-role">保姆 · 《阿长与〈山海经〉》</div>
-      <div class="char-detail"><strong>外貌</strong>：黄胖而矮，睡相不好<br><strong>行为</strong>：规矩多（除夕吃福橘、人死了说"老掉了"）、谋害隐鼠<br><strong>转折</strong>：买来《山海经》——"我似乎遇着了一个霹雳，全体都震悚起来"<br><strong>写法</strong>：欲扬先抑</div>
-    </div>
-    <div class="char-card" onclick="this.classList.toggle('expanded')">
-      <div class="char-emoji">👨‍⚕️</div>
-      <div class="char-name">藤野先生</div>
-      <div class="char-role">恩师 · 《藤野先生》</div>
-      <div class="char-detail"><strong>外貌</strong>：黑瘦，穿衣服模胡，有时忘记带领结<br><strong>行为</strong>：添改讲义、纠正解剖图、关心中国女人裹脚<br><strong>特点</strong>：没有民族偏见、严谨求实<br><strong>写法</strong>：外貌描写先抑后扬 + 细节刻画</div>
-    </div>
-    <div class="char-card" onclick="this.classList.toggle('expanded')">
-      <div class="char-emoji">👨‍🏫</div>
-      <div class="char-name">寿镜吾</div>
-      <div class="char-role">私塾先生 · 《从百草园到三味书屋》</div>
-      <div class="char-detail"><strong>外貌</strong>：极方正、质朴、博学<br><strong>行为</strong>：有戒尺但不常用，读书入神时微笑仰头<br><strong>特点</strong>：严厉但并不凶残，有旧式文人的可爱<br><strong>写法</strong>：细节白描</div>
-    </div>
-    <div class="char-card" onclick="this.classList.toggle('expanded')">
-      <div class="char-emoji">💊</div>
-      <div class="char-name">庸医（陈莲河等）</div>
-      <div class="char-role">反面 · 《父亲的病》</div>
-      <div class="char-detail"><strong>行为</strong>：故弄玄虚（原配蟋蟀一对、平地木十株）、勒索诊金<br><strong>本质</strong>：医术不精却装模作样，草菅人命<br><strong>写法</strong>：讽刺 + 反语</div>
-    </div>
-    <div class="char-card" onclick="this.classList.toggle('expanded')">
-      <div class="char-emoji">👻</div>
-      <div class="char-name">无常</div>
-      <div class="char-role">鬼物 · 《无常》</div>
-      <div class="char-detail"><strong>特点</strong>：爽直、通人情、有幽默感<br><strong>深层</strong>：鬼比人公道——"公正的裁判是在阴间"<br><strong>写法</strong>：借鬼讽人</div>
-    </div>
-    <div class="char-card" onclick="this.classList.toggle('expanded')">
-      <div class="char-emoji">😔</div>
-      <div class="char-name">范爱农</div>
-      <div class="char-role">友人 · 《范爱农》</div>
-      <div class="char-detail"><strong>特点</strong>：孤傲、冷漠、不合群<br><strong>转变</strong>：从讨厌到理解——"我"和他是同一类人<br><strong>结局</strong>：辛亥革命后溺水身亡<br><strong>写法</strong>：先抑后扬 + 时代映照</div>
-    </div>
-  </div>
-
-  <div class="card" style="margin-top:14px">
-    <h3>🧩 ConcepTest：写法辨析</h3>
-    <p>鲁迅写阿长"睡相不好"，先让人厌烦，后来写她买《山海经》让人感动。这是什么写法？</p>
-    <div class="quiz-option" onclick="selectConcept(this,'m3-c1',true)">A. 欲扬先抑</div>
-    <div class="quiz-option" onclick="selectConcept(this,'m3-c1',false)">B. 托物言志</div>
-    <div class="quiz-option" onclick="selectConcept(this,'m3-c1',false)">C. 借景抒情</div>
-    <div class="quiz-option" onclick="selectConcept(this,'m3-c1',false)">D. 卒章显志</div>
-    <div class="quiz-feedback" id="m3-c1-fb"></div>
-  </div>
-</section>
-
-<!-- ===== MODULE 4: TECHNIQUES ===== -->
-<section class="section" id="m4">
-  <div class="section-title"><span class="num">4</span> 核心手法解析 <button class="speak-btn" onclick="TeachAnyTTS.speakSection('m4')">🔊</button></div>
-
-  <div class="card">
-    <h3>① 欲扬先抑</h3>
-    <p>先写人物的缺点或令人不快的方面，再写其闪光点，形成情感反转，使人物更真实丰满。</p>
-    <div class="quote-box" style="margin-top:8px">
-      <div class="quote-text">"我平时叫她'阿妈'，连'长'字也不带；但到憎恶她的时候，——例如知道了谋死我那隐鼠的却是她的时候，就叫她阿长。"</div>
-      <div class="quote-source">→ 后文：她买来《山海经》后，"我"对她产生"新的敬意"</div>
-    </div>
-  </div>
-
-  <div class="card">
-    <h3>② 对比</h3>
-    <p>把两种不同的人、事、环境并列，使差异更鲜明。</p>
-    <p>🔹 <strong>环境对比</strong>：百草园（自由欢乐） vs 三味书屋（拘束刻板）</p>
-    <p>🔹 <strong>人物对比</strong>：藤野先生（真诚无偏见） vs 东京"清国留学生"（虚伪浑噩）</p>
-    <p>🔹 <strong>心理对比</strong>：看五猖会前的兴奋 vs 背完书后的扫兴</p>
-  </div>
-
-  <div class="card">
-    <h3>③ 细节白描</h3>
-    <p>用极简的笔触勾勒人物最传神的一两个细节，不堆砌形容词，却让人过目不忘。</p>
-    <div class="quote-box" style="margin-top:8px">
-      <div class="quote-text">"他有一条赤绳，上面挂着许多小铃，冬冬地响着，跳着，笑着……"</div>
-      <div class="quote-source">——无常出场，只用一个画面就写活了</div>
-    </div>
-  </div>
-
-  <div class="card">
-    <h3>④ 反语与讽刺</h3>
-    <p>用褒义词写贬义，用平静的语气写愤怒的事，制造"冷幽默"效果。</p>
-    <div class="quote-box" style="margin-top:8px">
-      <div class="quote-text">"S城的名医……他出门坐轿子，每回不过四元。"</div>
-      <div class="quote-source">——"名医"是反语，"不过四元"是讽刺诊金昂贵</div>
-    </div>
-  </div>
-</section>
-
-<!-- ===== MODULE 5: DUAL PERSPECTIVE ===== -->
-<section class="section" id="m5">
-  <div class="section-title"><span class="num">5</span> 双视角：童年的眼与中年的心 <button class="speak-btn" onclick="TeachAnyTTS.speakSection('m5')">🔊</button></div>
-
-  <div class="card">
-    <h3>🔑 核心概念：双视角叙事</h3>
-    <p>《朝花夕拾》最大的特点是<strong>两个"我"同时存在</strong>：</p>
-    <p>• <strong>童年的"我"</strong>：天真、好奇、容易惊喜也容易恐惧</p>
-    <p>• <strong>中年的"我"</strong>（叙述者）：冷静、反思、偶尔嘲讽</p>
-    <p>两个视角交织，让文章有了<strong>温度差</strong>——表面写童年趣事，底下涌动着中年的悲凉。</p>
-  </div>
-
-  <div class="compare-cols">
-    <div class="compare-col child">
-      <h4>🌱 童年之眼</h4>
-      <ul>
-        <li>百草园是乐园，有无限趣味</li>
-        <li>阿长是讨厌的保姆</li>
-        <li>五猖会是世界上最美好的事</li>
-        <li>父亲叫背书是"最痛苦的事"</li>
-        <li>隐鼠是"我"最好的朋友</li>
-      </ul>
-    </div>
-    <div class="compare-col adult">
-      <h4>👓 中年之眼</h4>
-      <ul>
-        <li>那点"趣味"背后是被封闭的童年</li>
-        <li>阿长是底层劳动者的缩影</li>
-        <li>看会的渴望被封建教育扼杀</li>
-        <li>父亲的病被庸医耽误</li>
-        <li>弱小者的命运始终被忽视</li>
-      </ul>
-    </div>
-  </div>
-
-  <div class="card" style="margin-top:14px">
-    <h3>🧩 ConcepTest：判断视角</h3>
-    <p>"但我还在纪念那勇敢而天真的保姆，长妈妈。——这话是真是假，读者自己判断罢。"这句话是哪个视角？</p>
-    <div class="quiz-option" onclick="selectConcept(this,'m5-c1',false)">A. 童年视角</div>
-    <div class="quiz-option" onclick="selectConcept(this,'m5-c1',true)">B. 中年视角（冷静反思）</div>
-    <div class="quiz-option" onclick="selectConcept(this,'m5-c1',false)">C. 两个视角混合</div>
-    <div class="quiz-feedback" id="m5-c1-fb"></div>
-  </div>
-</section>
-
-<!-- ===== MODULE 6: ANNOTATION PRACTICE ===== -->
-<section class="section" id="m6">
-  <div class="section-title"><span class="num">6</span> 批注实战 <button class="speak-btn" onclick="TeachAnyTTS.speakSection('m6')">🔊</button></div>
-
-  <div class="card">
-    <h3>📝 批注方法三步法</h3>
-    <p><strong>Step 1</strong> 画出关键语句（动词、形容词、修辞句）</p>
-    <p><strong>Step 2</strong> 标注写法（修辞？描写方法？对比？）</p>
-    <p><strong>Step 3</strong> 写出效果（写出了什么？表达了什么？）</p>
-  </div>
-
-  <div class="annotate-box">
-    <h3 style="font-size:15px;color:var(--primary);margin-bottom:10px">🎯 点击高亮词语，查看批注示例</h3>
-    <div class="annotate-text" id="annotateText">
-      不必说<span class="hl" data-hint="碧绿：色彩鲜明，写出了菜畦的生机——视觉描写">碧绿</span>的菜畦，<span class="hl" data-hint="光滑：触觉描写，石井栏经年累月的触感">光滑</span>的石井栏，<span class="hl" data-hint="高大：仰视视角，用儿童的目光仰望——以小见大">高大</span>的皂荚树，<span class="hl" data-hint="紫红：色彩鲜艳，与'碧绿'呼应，呈现百草园的色彩丰富">紫红</span>的桑葚；也不必说鸣蝉在树叶里长吟，<span class="hl" data-hint="肥胖：拟人化描写，赋予黄蜂人的体态，童趣盎然">肥胖</span>的黄蜂伏在菜花上，<span class="hl" data-hint="轻捷：动作描写，叫天子飞起的速度感与灵动感">轻捷</span>的叫天子忽然从草间直窜向云霄里去了。
-    </div>
-    <div class="annotate-hint" id="annotateHint"></div>
-  </div>
-
-  <div class="card" style="margin-top:14px">
-    <h3>✏️ 仿写练习</h3>
-    <p>模仿"不必说……也不必说……单是……"的句式，写一段你记忆中的某个地方。</p>
-    <div class="scaffold-box">
-      <div class="scaffold-level l1">
-        <span class="level-tag">Level 1 全支架</span>
-        <p>不必说________的________，________的________；也不必说________，________；单是________就有________。</p>
-      </div>
-      <div class="scaffold-level l2">
-        <span class="level-tag">Level 2 半支架</span>
-        <p>不必说____，也不必说____，单是____就有无限趣味。</p>
-      </div>
-      <div class="scaffold-level l3">
-        <span class="level-tag">Level 3 自由写</span>
-        <p>仿照"不必说……也不必说……单是……"的句式，独立写一段景物描写。</p>
-      </div>
-      <textarea id="imitationWriting" placeholder="在这里写下你的仿写……"></textarea>
-    </div>
-  </div>
-</section>
-
-<!-- ===== COMPREHENSIVE TASK ===== -->
-<section class="section" id="task">
-  <div class="section-title"><span class="num">🏆</span> 综合任务 <button class="speak-btn" onclick="TeachAnyTTS.speakSection('task')">🔊</button></div>
-
-  <div class="card">
-    <h3>📋 任务一：篇目排序</h3>
-    <p>将以下5篇散文按鲁迅的人生经历排序（从童年到青年）：</p>
-    <ul class="sortable-list" id="sortList">
-      <li class="sortable-item" data-order="3" draggable="true"><span class="drag-handle">⠿</span>《藤野先生》</li>
-      <li class="sortable-item" data-order="1" draggable="true"><span class="drag-handle">⠿</span>《从百草园到三味书屋》</li>
-      <li class="sortable-item" data-order="4" draggable="true"><span class="drag-handle">⠿</span>《琐记》</li>
-      <li class="sortable-item" data-order="2" draggable="true"><span class="drag-handle">⠿</span>《父亲的病》</li>
-      <li class="sortable-item" data-order="5" draggable="true"><span class="drag-handle">⠿</span>《范爱农》</li>
+    <div class="card-title"><span class="num">🎯</span>学习目标</div>
+    <ul class="obj-list">
+      <li class="obj-item">
+        <span class="check">✓</span>
+        <span class="obj-text">按时间顺序正确排列：三国→西晋→东晋→南北朝→隋→唐的朝代更替</span>
+      </li>
+      <li class="obj-item">
+        <span class="check">✓</span>
+        <span class="obj-text">说出隋朝完成统一的历史条件（经济基础、军事优势、政治手段）</span>
+      </li>
+      <li class="obj-item">
+        <span class="check">✓</span>
+        <span class="obj-text">概述唐太宗贞观之治的主要内容（政治、经济、民族关系）</span>
+      </li>
+      <li class="obj-item">
+        <span class="check">✓</span>
+        <span class="obj-text">通过史料分析，理解"统一是历史发展趋势"的史学观点</span>
+      </li>
     </ul>
-    <button class="btn btn-primary" onclick="checkSort()" style="margin-top:10px">检查排序</button>
+  </div>
+
+  <!-- Pre-Test -->
+  <div class="card">
+    <div class="card-title"><span class="num">📝</span>学前自测</div>
+    <p style="font-size:14px;color:var(--text-secondary);margin-bottom:16px;">回答3道题，测测你对这段历史的了解程度！</p>
+
+    <div class="quiz-question">1. 请问"三国"指的是哪三个国家？</div>
+    <div class="quiz-options" data-correct="A" data-q="pre1">
+      <div class="quiz-option" data-opt="A" onclick="selectOpt(this, 'pre1')">
+        <span class="opt-letter">A</span>魏、蜀、吴
+      </div>
+      <div class="quiz-option" data-opt="B" onclick="selectOpt(this, 'pre1')">
+        <span class="opt-letter">B</span>赵、魏、韩
+      </div>
+      <div class="quiz-option" data-opt="C" onclick="selectOpt(this, 'pre1')">
+        <span class="opt-letter">C</span>燕、齐、楚
+      </div>
+    </div>
+    <div class="feedback" id="feedback-pre1"></div>
+
+    <div class="quiz-question" style="margin-top:20px;">2. 隋朝统一南北朝是在哪一年？</div>
+    <div class="quiz-options" data-correct="C" data-q="pre2">
+      <div class="quiz-option" data-opt="A" onclick="selectOpt(this, 'pre2')">
+        <span class="opt-letter">A</span>公元220年
+      </div>
+      <div class="quiz-option" data-opt="B" onclick="selectOpt(this, 'pre2')">
+        <span class="opt-letter">B</span>公元420年
+      </div>
+      <div class="quiz-option" data-opt="C" onclick="selectOpt(this, 'pre2')">
+        <span class="opt-letter">C</span>公元589年
+      </div>
+    </div>
+    <div class="feedback" id="feedback-pre2"></div>
+
+    <div class="quiz-question" style="margin-top:20px;">3. 唐朝繁盛局面出现的根本原因是？</div>
+    <div class="quiz-options" data-correct="B" data-q="pre3">
+      <div class="quiz-option" data-opt="A" onclick="selectOpt(this, 'pre3')">
+        <span class="opt-letter">A</span>科举制度的建立
+      </div>
+      <div class="quiz-option" data-opt="B" onclick="selectOpt(this, 'pre3')">
+        <span class="opt-letter">B</span>国家统一，社会稳定
+      </div>
+      <div class="quiz-option" data-opt="C" onclick="selectOpt(this, 'pre3')">
+        <span class="opt-letter">C</span>唐太宗善于纳谏
+      </div>
+    </div>
+    <div class="feedback" id="feedback-pre3"></div>
+
+    <button class="btn btn-primary" onclick="checkPreTest()" style="margin-top:20px;width:100%;">查看结果</button>
+  </div>
+
+  <button class="btn btn-primary" onclick="switchSection('timeline')" style="width:100%;font-size:16px;padding:16px;">
+    🚀 开始学习：朝代更替 →
+  </button>
+</div>
+
+<!-- ========== SECTION: TIMELINE ========== -->
+<div class="section" id="section-timeline" data-module-id="timeline">
+  <div class="section-header">
+    <span class="emoji">⏳</span>
+    <h2>朝代更替时间线（220年—907年）</h2>
   </div>
 
   <div class="card">
-    <h3>📋 任务二：读书报告</h3>
-    <p>选一篇你印象最深的散文，写一段200字左右的读书报告。要求：①概括内容 ②分析手法 ③写出感悟</p>
-    <textarea id="bookReport" placeholder="选一篇散文，写出你的读书报告……" style="min-height:140px"></textarea>
-    <div style="margin-top:10px">
-      <button class="btn btn-secondary" onclick="showRubric()">查看评分标准</button>
+    <div class="card-title"><span class="num">📌</span>互动任务：排列朝代顺序</div>
+    <p style="font-size:13px;color:var(--text-secondary);margin-bottom:14px;">
+      将以下朝代按时间顺序排列，拖动卡片调整顺序。正确顺序是什么？提示：找规律！
+    </p>
+
+    <ul class="sortable-list" id="sortableTimeline">
+      <li class="sortable-item" draggable="true" data-order="1">
+        <span class="handle">☰</span>
+        <span>① 隋朝（581年—618年）</span>
+      </li>
+      <li class="sortable-item" draggable="true" data-order="2">
+        <span class="handle">☰</span>
+        <span>② 三国时期（220年—280年）</span>
+      </li>
+      <li class="sortable-item" draggable="true" data-order="3">
+        <span class="handle">☰</span>
+        <span>③ 唐朝（618年—907年）</span>
+      </li>
+      <li class="sortable-item" draggable="true" data-order="4">
+        <span class="handle">☰</span>
+        <span>④ 南北朝（420年—589年）</span>
+      </li>
+      <li class="sortable-item" draggable="true" data-order="5">
+        <span class="handle">☰</span>
+        <span>⑤ 西晋（265年—316年）</span>
+      </li>
+      <li class="sortable-item" draggable="true" data-order="6">
+        <span class="handle">☰</span>
+        <span>⑥ 东晋（317年—420年）</span>
+      </li>
+    </ul>
+
+    <button class="btn btn-primary" onclick="checkTimelineSort()" style="margin-top:16px;width:100%;">核对答案</button>
+    <div class="feedback" id="feedback-timeline"></div>
+  </div>
+
+  <!-- Timeline Detail -->
+  <div class="card">
+    <div class="card-title"><span class="num">🗺️</span>朝代更替详解</div>
+
+    <div class="timeline-wrap">
+      <div class="timeline-line"></div>
+
+      <div class="tl-item">
+        <div class="tl-dot active"></div>
+        <div class="tl-year">220年—280年</div>
+        <div class="tl-title">三国时期</div>
+        <div class="tl-desc">魏、蜀、吴三国鼎立。曹魏占据北方，实力最强；蜀汉据有益州；东吴统治江东。</div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-year">265年—316年</div>
+        <div class="tl-title">西晋（短暂统一）</div>
+        <div class="tl-desc">司马炎代魏建晋，280年灭吴，统一全国。但仅维持了36年便因"八王之乱"崩溃。</div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-year">317年—420年</div>
+        <div class="tl-title">东晋（衣冠南渡）</div>
+        <div class="tl-desc">晋室南迁建都建康（南京），北方陷入五胡十六国混战，史称"衣冠南渡"。</div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-year">420年—589年</div>
+        <div class="tl-title">南北朝（南北对峙）</div>
+        <div class="tl-desc">南方：宋→齐→梁→陈四朝更替；北方：北魏→东魏→西魏→北齐→北周。合计约170年对峙。</div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-year">581年—618年</div>
+        <div class="tl-title">隋朝（重新统一）</div>
+        <div class="tl-desc">杨坚代北周建隋，589年灭陈，完成统一。开创科举、三省六部，修建大运河。</div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-year">618年—907年</div>
+        <div class="tl-title">唐朝（盛世高峰）</div>
+        <div class="tl-desc">李渊建唐，经历贞观之治、武周政治、开元盛世，成为中国历史上最繁盛的朝代之一。</div>
+      </div>
     </div>
-    <div id="rubricPanel" style="display:none;margin-top:10px">
-      <table class="rubric-table">
-        <tr><th>维度</th><th>优秀（4-5分）</th><th>良好（3分）</th><th>待提升（1-2分）</th></tr>
-        <tr><td><strong>内容准确</strong></td><td>概括准确，无事实错误</td><td>基本正确，有小误</td><td>有明显事实错误</td></tr>
-        <tr><td><strong>手法分析</strong></td><td>正确识别手法并分析效果</td><td>识别手法但分析浅</td><td>未涉及手法分析</td></tr>
-        <tr><td><strong>感悟深度</strong></td><td>有个人独到见解</td><td>有感悟但较笼统</td><td>泛泛而谈</td></tr>
-        <tr><td><strong>表达质量</strong></td><td>语言流畅，结构清晰</td><td>基本通顺</td><td>语句不通或过短</td></tr>
-      </table>
+  </div>
+
+  <button class="btn btn-primary" onclick="switchSection('module1')" style="width:100%;font-size:16px;padding:16px;">
+    ⚔️ 深入学习：三国与西晋 →
+  </button>
+</div>
+
+<!-- ========== SECTION: MODULE 1 — 三国与西晋 ========== -->
+<div class="section" id="section-module1" data-module-id="module1">
+  <div class="section-header">
+    <span class="emoji">⚔️</span>
+    <h2>模块一：三国鼎立与西晋统一</h2>
+  </div>
+
+  <!-- Deep Understanding: Compare -->
+  <div class="card">
+    <div class="card-title"><span class="num">🔍</span>深度理解：魏、蜀、吴三国对比</div>
+
+    <div class="compare-grid">
+      <div class="compare-col">
+        <h4>🟦 魏（220年—266年）</h4>
+        <ul>
+          <li>统治区域：北方中原</li>
+          <li>奠基者：曹操（未称帝）</li>
+          <li>建立者：曹丕（220年）</li>
+          <li>优势：人口最多，经济最强</li>
+          <li>都城：洛阳</li>
+        </ul>
+      </div>
+      <div class="compare-col">
+        <h4>🟥 蜀（221年—263年）</h4>
+        <ul>
+          <li>统治区域：益州（四川盆地）</li>
+          <li>奠基者/建立者：刘备</li>
+          <li>丞相：诸葛亮</li>
+          <li>特色：以汉室正统自居</li>
+          <li>都城：成都</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="compare-grid" style="margin-top:12px;">
+      <div class="compare-col">
+        <h4>🟩 吴（229年—280年）</h4>
+        <ul>
+          <li>统治区域：江东（江南地区）</li>
+          <li>奠基者：孙权</li>
+          <li>特色：海上贸易，渔业发达</li>
+          <li>存在时间最长（252年）</li>
+          <li>都城：建业（南京）</li>
+        </ul>
+      </div>
+      <div class="compare-col" style="background:#f0fdf4;">
+        <h4 style="color:var(--success);">💡 为何西晋能统一？</h4>
+        <ul>
+          <li>✅ 魏国实力最强，统一北方</li>
+          <li>✅ 司马氏夺权，政治稳定</li>
+          <li>✅ 蜀吴各自衰弱，难以抵抗</li>
+          <li>✅ 280年三路伐吴，一举统一</li>
+        </ul>
+      </div>
     </div>
   </div>
-</section>
 
-<!-- ===== POST-TEST ===== -->
-<section class="section" id="posttest">
-  <div class="section-title"><span class="num">📝</span> 后测 <button class="speak-btn" onclick="TeachAnyTTS.speakSection('posttest')">🔊</button></div>
-
-  <div class="card" id="post-q1">
-    <h3>❓ 第1题（理解级）</h3>
-    <p>《朝花夕拾》中，鲁迅为什么将书名从"旧事重提"改为"朝花夕拾"？</p>
-    <div class="quiz-option" onclick="selectPost(this,'post-q1',true)">"朝花夕拾"更有诗意，比喻晚年回忆童年美好往事，暗示回忆中的温馨与惆怅</div>
-    <div class="quiz-option" onclick="selectPost(this,'post-q1',false)">因为旧事重提太直白，没有文学性</div>
-    <div class="quiz-option" onclick="selectPost(this,'post-q1',false)">因为鲁迅喜欢花，想用花的意象</div>
-    <div class="quiz-feedback" id="post-q1-fb"></div>
+  <!-- Concept Box -->
+  <div class="concept-box">
+    <h4>📖 史学概念：何为"正统"之争？</h4>
+    <p>蜀汉以"汉室宗亲"自居，声称继承东汉正统；魏国则以实力说话，认为"天命"已转；东吴则强调江东地利。三国各自构建了自己的"正统性"叙事，这也是为什么陈寿《三国志》以魏为正统，而罗贯中《三国演义》却以蜀汉为正统——史观不同，正统标准不同。</p>
   </div>
 
-  <div class="card" id="post-q2">
-    <h3>❓ 第2题（分析级）</h3>
-    <p>《五猖会》中，父亲让"我"背《鉴略》这一情节，属于什么写法？表达了什么？</p>
-    <div class="quiz-option" onclick="selectPost(this,'post-q2',false)">象征手法，象征封建制度的腐朽</div>
-    <div class="quiz-option" onclick="selectPost(this,'post-q2',true)">心理对比手法，用兴奋与扫兴的落差揭示封建教育对童心的摧残</div>
-    <div class="quiz-option" onclick="selectPost(this,'post-q2',false)">夸张手法，夸张了背书的痛苦</div>
-    <div class="quiz-feedback" id="post-q2-fb"></div>
+  <!-- Quiz -->
+  <div class="card">
+    <div class="card-title"><span class="num">📝</span>练习1 — 层级一</div>
+    <div class="quiz-question">西晋灭吴、完成全国统一是在公元多少年？</div>
+    <div class="quiz-options" data-correct="B" data-q="m1q1">
+      <div class="quiz-option" data-opt="A" onclick="selectOpt(this, 'm1q1')">
+        <span class="opt-letter">A</span>220年
+      </div>
+      <div class="quiz-option" data-opt="B" onclick="selectOpt(this, 'm1q1')">
+        <span class="opt-letter">B</span>280年
+      </div>
+      <div class="quiz-option" data-opt="C" onclick="selectOpt(this, 'm1q1')">
+        <span class="opt-letter">C</span>589年
+      </div>
+    </div>
+    <div class="feedback" id="feedback-m1q1"></div>
+    <button class="btn btn-primary" onclick="checkQuiz('m1q1', 'module1')" style="margin-top:12px;width:100%;">提交答案</button>
   </div>
 
-  <div class="card" id="post-q3">
-    <h3>❓ 第3题（应用级）</h3>
-    <p>下列哪个句子最能体现"中年鲁迅的反思视角"？</p>
-    <div class="quiz-option" onclick="selectPost(this,'post-q3',false)">A. "Ade，我的蟋蟀们！Ade，我的覆盆子们和木莲们！"</div>
-    <div class="quiz-option" onclick="selectPost(this,'post-q3',false)">B. "长的草里是不去的，因为相传这园里有一条很大的赤练蛇。"</div>
-    <div class="quiz-option" onclick="selectPost(this,'post-q3',true)">C. "我总要上下四方寻求，得到一种最黑最黑的咒文，先来诅咒一切反对白话者。"</div>
-    <div class="quiz-feedback" id="post-q3-fb"></div>
+  <div class="card">
+    <div class="card-title"><span class="num">📝</span>练习2 — 层级二：材料分析</div>
+    <div class="source-card">
+      <div class="source-label">史料来源</div>
+      <div class="source-text">
+        "魏蜀吴三分天下，然魏有其地，蜀有其险，吴有其江。魏据中原，兵多粮足；蜀依剑阁，一夫当关；吴凭长江，水师无敌。然天下终归一者，非地险所能守也。"——某史学家评价
+      </div>
+    </div>
+    <div class="quiz-question">根据材料，西晋能够最终统一全国的最主要原因是什么？（请选择最准确的答案）</div>
+    <div class="quiz-options" data-correct="A" data-q="m1q2">
+      <div class="quiz-option" data-opt="A" onclick="selectOpt(this, 'm1q2')">
+        <span class="opt-letter">A</span>魏国占据中原，经济和军事实力最强
+      </div>
+      <div class="quiz-option" data-opt="B" onclick="selectOpt(this, 'm1q2')">
+        <span class="opt-letter">B</span>蜀国有一夫当关的剑阁天险
+      </div>
+      <div class="quiz-option" data-opt="C" onclick="selectOpt(this, 'm1q2')">
+        <span class="opt-letter">C</span>吴国拥有无敌的水师
+      </div>
+    </div>
+    <div class="feedback" id="feedback-m1q2"></div>
+    <button class="btn btn-primary" onclick="checkQuiz('m1q2', 'module1')" style="margin-top:12px;width:100%;">提交答案</button>
   </div>
 
-  <div class="card" id="post-q4">
-    <h3>❓ 第4题（评价级·进阶）</h3>
-    <p>有人说《朝花夕拾》是"温暖的回忆"，也有人说它是"理性的批判"。你认为哪个更准确？为什么？</p>
-    <div class="quiz-option" onclick="selectPost(this,'post-q4',true)">两者兼有——温暖是表，批判是里；童年视角提供温暖，中年视角提供批判</div>
-    <div class="quiz-option" onclick="selectPost(this,'post-q4',false)">主要是温暖回忆，批判只是偶尔出现</div>
-    <div class="quiz-option" onclick="selectPost(this,'post-q4',false)">主要是理性批判，温暖只是点缀</div>
-    <div class="quiz-feedback" id="post-q4-fb"></div>
+  <button class="btn btn-secondary" onclick="switchSection('timeline')" style="width:49%;">← 朝代时间线</button>
+  <button class="btn btn-primary" onclick="switchSection('module2')" style="width:49%;">🌀 南北朝 →</button>
+</div>
+
+<!-- ========== SECTION: MODULE 2 — 南北朝 ========== -->
+<div class="section" id="section-module2" data-module-id="module2">
+  <div class="section-header">
+    <span class="emoji">🌀</span>
+    <h2>模块二：东晋与南北朝</h2>
   </div>
 
-  <div class="score-display" id="postScoreSummary" style="display:none">
-    <div class="score-circle" id="finalScoreCircle">0%</div>
-    <div id="finalScoreText" style="font-weight:700;font-size:16px;margin-bottom:4px"></div>
-    <div id="scoreDetail" style="font-size:13px;color:var(--text-secondary)"></div>
+  <div class="card">
+    <div class="card-title"><span class="num">❓</span>核心问题：为什么近400年的分裂后能重新统一？</div>
+    <p style="font-size:14px;color:var(--text-secondary);margin-bottom:16px;">
+      这个问题贯穿整个时期的学习。让我们从"衣冠南渡"开始，逐步找到答案。
+    </p>
+
+    <div class="concept-box">
+      <h4>🧥 什么是"衣冠南渡"？</h4>
+      <p>311年永嘉之乱，匈奴攻破洛阳，晋室被迫南迁。士族大家携带典籍、文物、工艺南迁建康（南京），史称"衣冠南渡"。这一事件使中国经济重心开始南移，江南地区得到大规模开发——这为后来的统一奠定了经济基础。</p>
+    </div>
+
+    <div class="concept-box">
+      <h4>🛡️ 什么是"五胡"？</h4>
+      <p>"五胡"指东汉至西晋时期迁入内地的五个少数民族：匈奴、鲜卑、羌、氐、羯。他们在北方建立了自己的政权，与汉族政权长期并存。"五胡入华"打破了汉族政权对中原的垄断，也促进了民族融合。</p>
+    </div>
   </div>
-</section>
 
-<!-- ===== KNOWLEDGE GRAPH ===== -->
-<section class="section" id="knowledge-graph">
-  <div class="section-title"><span class="num">🕸️</span> 知识图谱</div>
-  <div class="kg-container">
-    <svg viewBox="0 0 700 160" width="100%" style="max-width:700px;display:block;margin:0 auto">
-      <!-- Prereq nodes -->
-      <rect x="10" y="50" width="120" height="40" rx="8" fill="rgba(100,116,139,.1)" stroke="#94a3b8" stroke-width="1.5"/>
-      <text x="70" y="75" text-anchor="middle" fill="#64748b" font-size="12" font-weight="600">记叙文阅读</text>
-      <!-- Current node -->
-      <rect x="230" y="30" width="160" height="80" rx="12" fill="rgba(59,130,246,.1)" stroke="#3b82f6" stroke-width="2.5"/>
-      <text x="310" y="62" text-anchor="middle" fill="#3b82f6" font-size="15" font-weight="700">朝花夕拾</text>
-      <text x="310" y="82" text-anchor="middle" fill="#64748b" font-size="10">整本书阅读 · 七年级</text>
-      <!-- Next nodes -->
-      <rect x="470" y="20" width="120" height="36" rx="8" fill="rgba(6,182,212,.1)" stroke="#06b6d4" stroke-width="1.5"/>
-      <text x="530" y="43" text-anchor="middle" fill="#06b6d4" font-size="12" font-weight="600">小说阅读</text>
-      <rect x="470" y="80" width="120" height="36" rx="8" fill="rgba(245,158,11,.1)" stroke="#f59e0b" stroke-width="1.5"/>
-      <text x="530" y="103" text-anchor="middle" fill="#f59e0b" font-size="12" font-weight="600">散文阅读</text>
-      <!-- Edges -->
-      <line x1="130" y1="70" x2="230" y2="65" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrowG)"/>
-      <line x1="390" y1="55" x2="470" y2="40" stroke="#06b6d4" stroke-width="1.5" marker-end="url(#arrowC)"/>
-      <line x1="390" y1="80" x2="470" y2="95" stroke="#f59e0b" stroke-width="1.5" marker-end="url(#arrowA)"/>
-      <!-- Arrow markers -->
-      <defs>
-        <marker id="arrowG" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10Z" fill="#94a3b8"/></marker>
-        <marker id="arrowC" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10Z" fill="#06b6d4"/></marker>
-        <marker id="arrowA" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10Z" fill="#f59e0b"/></marker>
-      </defs>
-    </svg>
+  <!--南北朝对比图 -->
+  <div class="card">
+    <div class="card-title"><span class="num">🗺️</span>南北朝对峙形势</div>
+    <div class="compare-grid">
+      <div class="compare-col">
+        <h4>🌊 南方：四朝更迭</h4>
+        <ul>
+          <li><strong>宋（420年—479年）</strong>：刘裕建立，文学兴盛</li>
+          <li><strong>齐（479年—502年）</strong：存在仅23年</li>
+          <li><strong>梁（502年—557年）</strong>：梁武帝在位，出现"侯景之乱"</li>
+          <li><strong>陈（557年—589年）</strong>：最后一个南朝，589年被隋灭</li>
+        </ul>
+      </div>
+      <div class="compare-col">
+        <h4>🏔️ 北方：民族融合</h4>
+        <ul>
+          <li><strong>北魏（386年—534年）</strong>：鲜卑族建立，实行汉化改革</li>
+          <li><strong>东魏（534年—550年）</strong>→北齐</li>
+          <li><strong>西魏（535年—557年）</strong>→北周</li>
+          <li><strong>北周（557年—581年）</strong>：杨坚父系发迹地</li>
+        </ul>
+      </div>
+    </div>
   </div>
-</section>
 
-</div><!-- /container -->
+  <!-- Quiz -->
+  <div class="card">
+    <div class="card-title"><span class="num">📝</span>练习3</div>
+    <div class="quiz-question">"五胡"不包括以下哪个民族？</div>
+    <div class="quiz-options" data-correct="C" data-q="m2q1">
+      <div class="quiz-option" data-opt="A" onclick="selectOpt(this, 'm2q1')">
+        <span class="opt-letter">A</span>匈奴
+      </div>
+      <div class="quiz-option" data-opt="B" onclick="selectOpt(this, 'm2q1')">
+        <span class="opt-letter">B</span>鲜卑
+      </div>
+      <div class="quiz-option" data-opt="C" onclick="selectOpt(this, 'm2q1')">
+        <span class="opt-letter">C</span>蒙古
+      </div>
+    </div>
+    <div class="feedback" id="feedback-m2q1"></div>
+    <button class="btn btn-primary" onclick="checkQuiz('m2q1', 'module2')" style="margin-top:12px;width:100%;">提交答案</button>
+  </div>
 
-<!-- ===== TEACHANY ADAPTIVE ENGINE ===== -->
+  <button class="btn btn-secondary" onclick="switchSection('module1')" style="width:49%;">← 三国西晋</button>
+  <button class="btn btn-primary" onclick="switchSection('module3')" style="width:49%;">🏛️ 隋朝统一 →</button>
+</div>
+
+<!-- ========== SECTION: MODULE 3 — 隋朝 ========== -->
+<div class="section" id="section-module3" data-module-id="module3">
+  <div class="section-header">
+    <span class="emoji">🏛️</span>
+    <h2>模块三：隋朝统一</h2>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="num">📌</span>隋统一的历史条件（三要素分析）</div>
+
+    <div class="timeline-wrap">
+      <div class="timeline-line" style="left:16px;"></div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-year">💰 经济基础</div>
+        <div class="tl-title">江南经济崛起</div>
+        <div class="tl-desc">"衣冠南渡"后，江南得到大规模开发水稻种植技术提升，粮食产量增加。南北经济差距缩小，南方积累了大量财富，为统一提供了物质保障。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-year">⚔️ 军事优势</div>
+        <div class="tl-title">北周→隋：继承强权</div>
+        <div class="tl-desc">杨坚以"外戚"身份夺取北周皇位，继承了北周强大的军事力量。589年，隋以绝对兵力优势（51万大军）南下灭陈。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-year">🧠 政治手段</div>
+        <div class="tl-title">人心思统</div>
+        <div class="tl-desc">近400年的战乱让人民渴望统一和社会稳定。杨坚以"禅让"而非暴力夺权，减少了政治动荡，获得了士族支持。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Key innovations -->
+  <div class="card">
+    <div class="card-title"><span class="num">🔑</span>隋朝的历史贡献</div>
+    <table class="summary-table">
+      <thead>
+        <tr><th>制度创新</th><th>内容</th><th>对后世的影响</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>科举制度</strong></td>
+          <td>通过考试选拔官员，不看出身</td>
+          <td>影响中国1300多年，是现代公务员制度的前身</td>
+        </tr>
+        <tr>
+          <td><strong>三省六部制</strong></td>
+          <td>中书、门下、尚书三省分工制衡</td>
+          <td>确立了中央官制的基本格局，被唐朝继承完善</td>
+        </tr>
+        <tr>
+          <td><strong>大运河</strong></td>
+          <td>以洛阳为中心，南起余杭，北至涿郡</td>
+          <td>促进了南北经济文化交流，至今仍在发挥作用</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Quiz -->
+  <div class="card">
+    <div class="card-title"><span class="num">📝</span>练习4</div>
+    <div class="quiz-question">隋朝灭亡的根本原因是？</div>
+    <div class="quiz-options" data-correct="A" data-q="m3q1">
+      <div class="quiz-option" data-opt="A" onclick="selectOpt(this, 'm3q1')">
+        <span class="opt-letter">A</span>大兴土木（修建运河、长城等），导致民怨沸腾
+      </div>
+      <div class="quiz-option" data-opt="B" onclick="selectOpt(this, 'm3q1')">
+        <span class="opt-letter">B</span>科举制度损害了贵族利益
+      </div>
+      <div class="quiz-option" data-opt="C" onclick="selectOpt(this, 'm3q1')">
+        <span class="opt-letter">C</span>皇帝没有子嗣继承皇位
+      </div>
+    </div>
+    <div class="feedback" id="feedback-m3q1"></div>
+    <button class="btn btn-primary" onclick="checkQuiz('m3q1', 'module3')" style="margin-top:12px;width:100%;">提交答案</button>
+  </div>
+
+  <button class="btn btn-secondary" onclick="switchSection('module2')" style="width:49%;">← 南北朝</button>
+  <button class="btn btn-primary" onclick="switchSection('module4')" style="width:49%;">✨ 贞观之治 →</button>
+</div>
+
+<!-- ========== SECTION: MODULE 4 — 贞观之治 ========== -->
+<div class="section" id="section-module4" data-module-id="module4">
+  <div class="section-header">
+    <span class="emoji">✨</span>
+    <h2>模块四：贞观之治</h2>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="num">🌟</span>贞观之治（626年—649年）</div>
+    <p style="font-size:14px;color:var(--text-secondary);margin-bottom:16px;">
+      唐太宗李世民在位23年，开创了中国历史上著名的"贞观之治"，为盛唐奠定了基础。
+    </p>
+
+    <div class="compare-grid">
+      <div class="compare-col" style="background:#eff6ff;">
+        <h4 style="color:var(--primary);">⚖️ 政治清明</h4>
+        <ul>
+          <li>虚心纳谏（魏征直谏）</li>
+          <li>选贤任能（房玄龄、杜如晦）</li>
+          <li>完善科举，选拔人才</li>
+          <li>减轻徭役，休养生息</li>
+        </ul>
+      </div>
+      <div class="compare-col" style="background:#f0fdf4;">
+        <h4 style="color:var(--success);">💰 经济繁荣</h4>
+        <ul>
+          <li>推行均田制，农民有地种</li>
+          <li>轻徭薄赋，与民休息</li>
+          <li>社会安定，人口增长</li>
+          <li>粮食产量大幅提升</li>
+        </ul>
+      </div>
+    </div>
+    <div class="compare-grid" style="margin-top:12px;">
+      <div class="compare-col" style="background:#fef3c7;">
+        <h4 style="color:var(--accent);">🤝 民族和睦</h4>
+        <ul>
+          <li>击败东突厥，设都护府</li>
+          <li>被尊为"天可汗"</li>
+          <li>文成公主入藏（松赞干布）</li>
+          <li>丝绸之路畅通无阻</li>
+        </ul>
+      </div>
+      <div class="compare-col" style="background:#fdf4f2;">
+        <h4 style="color:var(--error);">📚 文化开放</h4>
+        <ul>
+          <li>完善科举，重视文教</li>
+          <li>玄奘西行取经</li>
+          <li>外国留学生来唐</li>
+          <li>诗歌、艺术高度繁荣</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Famous anecdote -->
+  <div class="card">
+    <div class="card-title"><span class="num">📖</span>史学故事：魏征直谏</div>
+    <div class="source-card">
+      <div class="source-label">史料记载</div>
+      <div class="source-text">
+        魏征前后上谏200余事，多被太宗采纳。太宗曾欲修洛阳宫，魏征上疏以为不可，太宗嘉纳之，谓侍臣曰："夫以铜为镜，可以正衣冠；以史为镜，可以知兴替；以人为镜，可以明得失。"
+      </div>
+    </div>
+    <div class="concept-box">
+      <h4>💡 思考问题</h4>
+      <p>唐太宗说"以人为镜，可以明得失"。魏征以敢于直言进谏著称。请思考：纳谏对于统治者做出正确决策有何意义？你认为现代社会中，什么角色扮演着"魏征"的角色？</p>
+    </div>
+  </div>
+
+  <!-- Quiz -->
+  <div class="card">
+    <div class="card-title"><span class="num">📝</span>练习5 — 层级三：观点评价</div>
+    <div class="quiz-question">有人认为"贞观之治的根本原因在于唐太宗个人的贤明"。你是否同意这一观点？请选择你支持的理由。</div>
+    <div class="quiz-options" data-correct="B" data-q="m4q1">
+      <div class="quiz-option" data-opt="A" onclick="selectOpt(this, 'm4q1')">
+        <span class="opt-letter">A</span>同意，因为历史完全由英雄人物决定
+      </div>
+      <div class="quiz-option" data-opt="B" onclick="selectOpt(this, 'm4q1')">
+        <span class="opt-letter">B</span>不完全同意，贞观之治建立在隋末农民起义教训和全国统一的基础上，个人贤能是重要因素，但不是根本原因
+      </div>
+      <div class="quiz-option" data-opt="C" onclick="selectOpt(this, 'm4q1')">
+        <span class="opt-letter">C</span>不同意，因为任何人都无法改变历史走向
+      </div>
+    </div>
+    <div class="feedback" id="feedback-m4q1"></div>
+    <button class="btn btn-primary" onclick="checkQuiz('m4q1', 'module4')" style="margin-top:12px;width:100%;">提交答案</button>
+  </div>
+
+  <button class="btn btn-secondary" onclick="switchSection('module3')" style="width:49%;">← 隋朝统一</button>
+  <button class="btn btn-success" onclick="switchSection('posttest')" style="width:49%;">🎯 综合测评 →</button>
+</div>
+
+<!-- ========== SECTION: POST TEST ========== -->
+<div class="section" id="section-posttest" data-module-id="posttest">
+
+  <div class="post-test-banner">
+    <h3>🎯 综合测评</h3>
+    <p>完成本课学习了吗？来做一套综合题，检验学习成果！</p>
+    <button class="btn btn-primary" onclick="startPostTest()" style="background:white;color:#065f46;font-weight:700;">
+      开始测评 →
+    </button>
+  </div>
+
+  <div id="posttest-questions" style="display:none;">
+
+    <!-- Post Q1 -->
+    <div class="card" id="pt-q1">
+      <div class="card-title"><span class="num">1</span>客观题 · 记忆</div>
+      <div class="quiz-question">隋朝完成全国统一，灭掉南朝陈的年份是？</div>
+      <div class="quiz-options" data-correct="C" data-q="pt1">
+        <div class="quiz-option" data-opt="A" onclick="selectOpt(this, 'pt1')"><span class="opt-letter">A</span>265年</div>
+        <div class="quiz-option" data-opt="B" onclick="selectOpt(this, 'pt1')"><span class="opt-letter">B</span>420年</div>
+        <div class="quiz-option" data-opt="C" onclick="selectOpt(this, 'pt1')"><span class="opt-letter">C</span>589年</div>
+        <div class="quiz-option" data-opt="D" onclick="selectOpt(this, 'pt1')"><span class="opt-letter">D</span>618年</div>
+      </div>
+      <div class="feedback" id="feedback-pt1"></div>
+    </div>
+
+    <!-- Post Q2 -->
+    <div class="card" id="pt-q2">
+      <div class="card-title"><span class="num">2</span>客观题 · 理解</div>
+      <div class="quiz-question">"贞观之治"不包括以下哪项内容？</div>
+      <div class="quiz-options" data-correct="C" data-q="pt2">
+        <div class="quiz-option" data-opt="A" onclick="selectOpt(this, 'pt2')"><span class="opt-letter">A</span>虚心纳谏，选贤任能</div>
+        <div class="quiz-option" data-opt="B" onclick="selectOpt(this, 'pt2')"><span class="opt-letter">B</span>推行均田制，轻徭薄赋</div>
+        <div class="quiz-option" data-opt="C" onclick="selectOpt(this, 'pt2')"><span class="opt-letter">C</span>废除科举，贵族世袭</div>
+        <div class="quiz-option" data-opt="D" onclick="selectOpt(this, 'pt2')"><span class="opt-letter">D</span>击败东突厥，被尊"天可汗"</div>
+      </div>
+      <div class="feedback" id="feedback-pt2"></div>
+    </div>
+
+    <!-- Post Q3: Drag sort -->
+    <div class="card" id="pt-q3">
+      <div class="card-title"><span class="num">3</span>排序题 · 应用</div>
+      <p style="font-size:13px;color:var(--text-secondary);margin-bottom:14px;">请将下列朝代按时间顺序排列（从早到晚）：</p>
+      <ul class="sortable-list" id="sortablePT">
+        <li class="sortable-item" draggable="true" data-order="a"><span class="handle">☰</span>① 唐朝</li>
+        <li class="sortable-item" draggable="true" data-order="b"><span class="handle">☰</span>② 东晋</li>
+        <li class="sortable-item" draggable="true" data-order="c"><span class="handle">☰</span>③ 三国</li>
+        <li class="sortable-item" draggable="true" data-order="d"><span class="handle">☰</span>④ 南北朝</li>
+        <li class="sortable-item" draggable="true" data-order="e"><span class="handle">☰</span>⑤ 西晋</li>
+        <li class="sortable-item" draggable="true" data-order="f"><span class="handle">☰</span>⑥ 隋朝</li>
+      </ul>
+      <div class="feedback" id="feedback-pt-sort"></div>
+    </div>
+
+    <!-- Post Q4: Source analysis -->
+    <div class="card" id="pt-q4">
+      <div class="card-title"><span class="num">4</span>材料分析题 · 分析</div>
+      <div class="source-card">
+        <div class="source-label">史料</div>
+        <div class="source-text">
+          "自五胡乱华以来，天下纷争，生灵涂炭，近四百年矣。隋文帝起而统一之，隋炀帝继之，大兴土木，徭役繁重，终致覆灭。唐高祖、太宗以隋为鉴，轻徭薄赋，遂有贞观之治。"
+        </div>
+      </div>
+      <div class="quiz-question">根据材料，分析从隋朝到唐朝"贞观之治"的历史连续性（提示：从"以史为鉴"的角度分析）。</div>
+      <div class="source-card" style="background:#f0f9ff;border-color:var(--secondary);margin-top:12px;">
+        <div class="source-label" style="color:var(--secondary);">作答提示</div>
+        <div class="source-text" style="color:var(--text);">
+          贞观之治的成就与隋朝灭亡的教训紧密相连。隋炀帝滥用民力导致农民起义，这使唐太宗认识到——必须<span style="background:#fef9c3;padding:1px 4px;border-radius:3px;">轻徭薄赋、与民休息</span>才能维持统治。这种"以史为鉴"的统治智慧，正是历史连续性的体现。
+        </div>
+      </div>
+      <button class="btn btn-success" onclick="completePostTest()" style="margin-top:16px;width:100%;font-size:16px;padding:16px;">
+        🏆 完成课程！
+      </button>
+    </div>
+
+    <button class="btn btn-primary" onclick="submitPostTest()" style="width:100%;margin-top:8px;">提交测评</button>
+  </div>
+
+  <!-- Results -->
+  <div id="posttest-results" style="display:none;">
+    <div class="card" style="text-align:center;padding:40px;">
+      <div class="score-circle" id="scoreCircle">
+        <span class="score-num" id="scoreNum">0</span>
+        <span class="score-label">正确率</span>
+      </div>
+      <h3 id="scoreMsg" style="font-size:1.2rem;margin-bottom:16px;">测评中...</h3>
+      <div id="scoreDetails" style="text-align:left;margin-top:16px;"></div>
+      <button class="btn btn-primary" onclick="window.scrollTo(0,0)" style="margin-top:24px;">回到顶部</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== BOTTOM NAV ========== -->
+<div class="bottom-nav">
+  <span class="nav-hint">📚 初中历史 · 三国至隋唐</span>
+  <span class="progress-text" id="progressText">已完成 0%</span>
+</div>
+
+<!-- ========== SCRIPTS ========== -->
 <script>
-const TeachAnyAdaptive = (() => {
-  const STORAGE_KEY = 'teachany_mastery';
-  function getMastery() { try{return JSON.parse(localStorage.getItem(STORAGE_KEY)||'{}');}catch(e){return{}}}
-  function saveMastery(d){localStorage.setItem(STORAGE_KEY,JSON.stringify(d));}
-  function getNodeMastery(id){return getMastery()[id]?.level||0;}
-  function updateMastery(id,correct,bloom=1){
-    const d=getMastery(),prev=d[id]?.level||0;
-    const w=.1+(bloom-1)*.04,score=correct?1:0;
-    const nl=Math.min(1,Math.max(0,prev*(1-w)+score*w));
-    d[id]={level:Math.round(nl*1000)/1000,attempts:(d[id]?.attempts||0)+1,lastCorrect:correct,lastAttempt:Date.now(),bloomMax:Math.max(d[id]?.bloomMax||0,correct?bloom:0)};
-    saveMastery(d);return d[id];
-  }
-  function checkPrerequisites(ids,th=0.5){const gaps=ids.filter(id=>getNodeMastery(id)<th);return{met:gaps.length===0,gaps};}
-  function decideBranch(id,prereqs=[]){const c=checkPrerequisites(prereqs);if(!c.met)return'review-prereq';const m=getNodeMastery(id);if(m<0.3)return'scaffold';if(m>=0.8)return'challenge';return'normal';}
-  return{getNodeMastery,updateMastery,checkPrerequisites,decideBranch,getMastery};
-})();
-</script>
-
-<!-- ===== TEACHANY PROGRESS TRACKER ===== -->
-<script>
-const TeachAnyProgress = (() => {
-  function getKey(cid){return`teachany_progress_${cid}`;}
-  function getProgress(cid){try{return JSON.parse(localStorage.getItem(getKey(cid))||'{}');}catch(e){return{};}}
-  function saveProgress(cid,d){const ex=getProgress(cid),m={...ex,...d,lastUpdated:Date.now()};localStorage.setItem(getKey(cid),JSON.stringify(m));}
-  function completeModule(cid,mid,r={}){const p=getProgress(cid);if(!p.modules)p.modules={};p.modules[mid]={completed:true,completedAt:Date.now(),score:r.score||0,total:r.totalQuestions||0,bloom:r.bloomLevel||1};const total=document.querySelectorAll('[data-module-id]').length;const done=Object.values(p.modules).filter(m=>m.completed).length;p.completionPercent=Math.round((done/Math.max(1,total))*100);saveProgress(cid,p);}
-  function saveScrollPosition(cid){localStorage.setItem(`teachany_scroll_${cid}`,String(window.scrollY));}
-  function restoreScrollPosition(cid){const p=localStorage.getItem(`teachany_scroll_${cid}`);if(p)requestAnimationFrame(()=>window.scrollTo(0,parseInt(p)));}
-  function recordTime(cid,s=30){const p=getProgress(cid);p.timeSpent=(p.timeSpent||0)+s;saveProgress(cid,p);}
-  function getGlobalStats(){try{return JSON.parse(localStorage.getItem('teachany_stats')||'{}');}catch(e){return{};}}
-  function updateGlobalStats(){const s=getGlobalStats(),today=new Date().toISOString().slice(0,10),last=s.lastActiveDate;if(last!==today){const y=new Date(Date.now()-86400000).toISOString().slice(0,10);s.streak=last===y?(s.streak||0)+1:1;s.lastActiveDate=today;}s.totalSessions=(s.totalSessions||0)+1;s.maxStreak=Math.max(s.maxStreak||0,s.streak||0);localStorage.setItem('teachany_stats',JSON.stringify(s));return s;}
-  function updateNavProgress(pct){const el=document.getElementById('navProgress');if(el)el.style.width=pct+'%';}
-  return{getProgress,saveProgress,completeModule,saveScrollPosition,restoreScrollPosition,recordTime,getGlobalStats,updateGlobalStats,updateNavProgress};
-})();
-</script>
-
-<!-- ===== TEACHANY TTS (Web Speech API) ===== -->
-<script>
-const TeachAnyTTS = (() => {
-  let synth = null;
-  let utterance = null;
-  let isPlaying = false;
-  let currentSection = null;
-  let speeds = [0.8, 1.0, 1.2, 1.5, 2.0];
-  let speedIdx = 1;
-  const voiceCache = {};
-
-  function init() {
-    synth = window.speechSynthesis;
-    if (!synth) { console.warn('[TTS] Web Speech API not supported'); return; }
-    // Pre-load voices
-    synth.getVoices();
-    if (synth.onvoiceschanged !== undefined) {
-      synth.onvoiceschanged = () => synth.getVoices();
-    }
-  }
-
-  function getChineseVoice() {
-    if (voiceCache.zh) return voiceCache.zh;
-    const voices = synth.getVoices();
-    // Priority: zh-CN > zh > any Chinese
-    let voice = voices.find(v => v.lang === 'zh-CN') ||
-                voices.find(v => v.lang.startsWith('zh-CN')) ||
-                voices.find(v => v.lang.startsWith('zh')) ||
-                voices.find(v => v.lang.includes('Chinese')) ||
-                voices[0];
-    voiceCache.zh = voice;
-    return voice;
-  }
-
-  function extractText(sectionId) {
-    const el = document.getElementById(sectionId);
-    if (!el) return '';
-    // Get all text content, excluding button text and hidden elements
-    let text = '';
-    const walk = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, {
-      acceptNode: (node) => {
-        const parent = node.parentElement;
-        if (!parent) return NodeFilter.FILTER_REJECT;
-        const tag = parent.tagName;
-        if (tag === 'SCRIPT' || tag === 'STYLE' || tag === 'BUTTON') return NodeFilter.FILTER_REJECT;
-        if (parent.classList.contains('speak-btn') || parent.classList.contains('tts-btn') || parent.classList.contains('tts-speed')) return NodeFilter.FILTER_REJECT;
-        return NodeFilter.FILTER_ACCEPT;
-      }
-    });
-    while (walk.nextNode()) {
-      const t = walk.currentNode.textContent.trim();
-      if (t) text += t + '。';
-    }
-    return text;
-  }
-
-  function speak(text, onEnd) {
-    if (!synth) return;
-    stop();
-    utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'zh-CN';
-    utterance.rate = speeds[speedIdx];
-    utterance.pitch = 1.0;
-    const voice = getChineseVoice();
-    if (voice) utterance.voice = voice;
-    utterance.onend = () => {
-      isPlaying = false;
-      if (currentSection) {
-        const el = document.getElementById(currentSection);
-        if (el) el.classList.remove('tts-active-section');
-      }
-      updateUI();
-      if (onEnd) onEnd();
-    };
-    utterance.onerror = () => {
-      isPlaying = false;
-      updateUI();
-    };
-    synth.speak(utterance);
-    isPlaying = true;
-    updateUI();
-  }
-
-  function speakSection(sectionId) {
-    if (!synth) return;
-    const text = extractText(sectionId);
-    if (!text) return;
-    // Remove previous highlight
-    if (currentSection) {
-      const prev = document.getElementById(currentSection);
-      if (prev) prev.classList.remove('tts-active-section');
-    }
-    currentSection = sectionId;
-    const el = document.getElementById(sectionId);
-    if (el) el.classList.add('tts-active-section');
-    speak(text, () => {
-      if (currentSection === sectionId) currentSection = null;
-    });
-  }
-
-  function playAll() {
-    if (!synth) return;
-    const sections = ['objectives','pretest','m1','m2','m3','m4','m5','m6','task','posttest'];
-    let idx = 0;
-    function playNext() {
-      if (idx >= sections.length) return;
-      speakSection(sections[idx]);
-      const savedUtterance = utterance;
-      if (savedUtterance) {
-        savedUtterance.onend = () => {
-          isPlaying = false;
-          if (currentSection) {
-            const el = document.getElementById(currentSection);
-            if (el) el.classList.remove('tts-active-section');
-          }
-          updateUI();
-          idx++;
-          playNext();
-        };
-      }
-    }
-    playNext();
-  }
-
-  function stop() {
-    if (synth) synth.cancel();
-    isPlaying = false;
-    if (currentSection) {
-      const el = document.getElementById(currentSection);
-      if (el) el.classList.remove('tts-active-section');
-      currentSection = null;
-    }
-    updateUI();
-  }
-
-  function cycleSpeed() {
-    speedIdx = (speedIdx + 1) % speeds.length;
-    updateUI();
-  }
-
-  function updateUI() {
-    const playBtn = document.getElementById('ttsPlayAll');
-    const stopBtn = document.getElementById('ttsStop');
-    const speedEl = document.getElementById('ttsSpeed');
-    if (playBtn) playBtn.classList.toggle('playing', isPlaying);
-    if (speedEl) speedEl.textContent = speeds[speedIdx] + 'x';
-  }
-
-  init();
-  return { speak, speakSection, playAll, stop, cycleSpeed, isPlaying: () => isPlaying };
-})();
-</script>
-
-<!-- ===== QUIZ LOGIC ===== -->
-<script>
-// Pre-test
-let preTestCorrect = 0, preTestCompleted = 0;
-function selectPre(el, qId, correct) {
-  const card = document.getElementById(qId);
-  if (card.dataset.answered) return;
-  card.dataset.answered = 'true';
-  preTestCompleted++;
-  el.classList.add('selected');
-  const fb = document.getElementById(qId + '-fb');
-  if (correct) {
-    el.classList.add('correct');
-    preTestCorrect++;
-    fb.className = 'quiz-feedback show feedback-correct';
-    fb.textContent = '✅ 正确！';
-  } else {
-    el.classList.add('wrong');
-    fb.className = 'quiz-feedback show feedback-wrong';
-    if (qId === 'pre-q1') fb.textContent = '❌ 《朝花夕拾》是鲁迅的回忆性散文集，不是小说集。小说集是《呐喊》《彷徨》等。';
-    if (qId === 'pre-q2') fb.textContent = '❌ "朝花"比喻童年往事，"夕拾"比喻晚年回忆——这是鲁迅对回忆写作的诗意表达。';
-  }
-  TeachAnyAdaptive.updateMastery('erta-stories', correct, 1);
-}
-
-// ConcepTest
-function selectConcept(el, qId, correct) {
-  const card = el.closest('.card') || el.closest('.section');
-  if (card && card.dataset.answered) return;
-  if (card) card.dataset.answered = 'true';
-  el.classList.add('selected');
-  const fb = document.getElementById(qId + '-fb');
-  if (correct) {
-    el.classList.add('correct');
-    fb.className = 'quiz-feedback show feedback-correct';
-    if (qId === 'm2-c1') fb.textContent = '✅ 正确！这是《无常》中描写无常出场的句子。';
-    if (qId === 'm3-c1') fb.textContent = '✅ 欲扬先抑：先写阿长的缺点（抑），后写她买《山海经》的感人举动（扬），形成强烈反差。';
-    if (qId === 'm5-c1') fb.textContent = '✅ "这话是真是假，读者自己判断罢"——这是中年叙述者的冷静反思语气，不是童年的天真。';
-  } else {
-    el.classList.add('wrong');
-    fb.className = 'quiz-feedback show feedback-wrong';
-    if (qId === 'm2-c1') fb.textContent = '❌ 这段描写的是"无常"——迎神赛会上的鬼物。注意"赤绳""小铃"是游神队列的特征。';
-    if (qId === 'm3-c1') fb.textContent = '❌ 托物言志是借物抒情，借景抒情是通过写景传情。这里先写不好后写好，是典型的欲扬先抑。';
-    if (qId === 'm5-c1') fb.textContent = '❌ 这句话有明显的反思和反讽语气，是中年视角。童年视角是天真直率的。';
-  }
-  TeachAnyAdaptive.updateMastery('erta-stories', correct, 2);
-}
-
-// Post-test
-let postTestCorrect = 0, postTestCompleted = 0;
-function selectPost(el, qId, correct) {
-  const card = document.getElementById(qId);
-  if (card.dataset.answered) return;
-  card.dataset.answered = 'true';
-  postTestCompleted++;
-  el.classList.add('selected');
-  const fb = document.getElementById(qId + '-fb');
-  const bloomMap = {'post-q1':2,'post-q2':3,'post-q3':3,'post-q4':5};
-  if (correct) {
-    el.classList.add('correct');
-    postTestCorrect++;
-    fb.className = 'quiz-feedback show feedback-correct';
-    if (qId === 'post-q1') fb.textContent = '✅ "朝花"暗喻童年美好记忆，"夕拾"暗喻暮年追忆。诗意的书名下是温馨与惆怅的交织。';
-    if (qId === 'post-q2') fb.textContent = '✅ 全篇的心理铺垫（对五猖会的热切期盼）与背书后的心理崩溃形成鲜明对比，揭露封建教育对童心的扼杀。';
-    if (qId === 'post-q3') fb.textContent = '✅ C选项中的"诅咒一切反对白话者"是中年鲁迅的理性批判语气，A、B都是童年视角。';
-    if (qId === 'post-q4') fb.textContent = '✅ 两者兼备是完整的理解：温暖的回忆是骨架，理性的批判是灵魂。双视角正是两种基调共存的来源。';
-  } else {
-    el.classList.add('wrong');
-    fb.className = 'quiz-feedback show feedback-wrong';
-    if (qId === 'post-q1') fb.textContent = '❌ 改名不仅是文学性，更有深层含义：朝花夕拾 = 晚年拾起童年花朵，既有美好也有凋零的惆怅。';
-    if (qId === 'post-q2') fb.textContent = '❌ 不是象征或夸张。全篇铺陈"兴奋→扫兴"的心理落差，这是对比手法的典型运用。';
-    if (qId === 'post-q3') fb.textContent = '❌ A是童年的不舍，B是童年的恐惧。只有C带有成年人批判社会的锋芒。';
-    if (qId === 'post-q4') fb.textContent = '❌ 单一说"温暖"或"批判"都不完整。《朝花夕拾》的魅力恰在于温情与冷峻并存。';
-  }
-  TeachAnyAdaptive.updateMastery('erta-stories', correct, bloomMap[qId] || 2);
-  if (postTestCompleted >= 4) setTimeout(showPostScore, 500);
-}
-
-function showPostScore() {
-  const pct = Math.round((postTestCorrect/postTestCompleted)*100);
-  const circle = document.getElementById('finalScoreCircle');
-  const txt = document.getElementById('finalScoreText');
-  const detail = document.getElementById('scoreDetail');
-  const summary = document.getElementById('postScoreSummary');
-  summary.style.display = 'block';
-  circle.textContent = pct+'%';
-  if(pct>=90){txt.textContent='🌟 优秀！';detail.innerHTML=`你答对了 ${postTestCorrect}/${postTestCompleted} 题，对《朝花夕拾》有了扎实的理解！`;}
-  else if(pct>=70){txt.textContent='👍 良好！';detail.innerHTML=`你答对了 ${postTestCorrect}/${postTestCompleted} 题，基础概念基本掌握了，建议复习双视角和写作手法。`;}
-  else{txt.textContent='💪 继续加油！';detail.innerHTML=`你答对了 ${postTestCorrect}/${postTestCompleted} 题，建议重新阅读各模块内容，特别注意双视角叙事的理解。`;}
-  TeachAnyProgress.completeModule('chinese-erta-stories','post-test',{score:postTestCorrect,totalQuestions:postTestCompleted});
-  if(typeof TeachAnySR!=='undefined')TeachAnySR.addToReview('erta-stories','朝花夕拾',window.location.href);
-  if(typeof TeachAnyAchievements!=='undefined')TeachAnyAchievements.checkAndAward('chinese-erta-stories','erta-stories');
-}
-
-// Tab switching
-function switchTab(evt, tabId) {
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-  evt.currentTarget.classList.add('active');
-  document.getElementById(tabId).classList.add('active');
-}
-
-// Annotation
-document.querySelectorAll('.annotate-text .hl').forEach(hl => {
-  hl.addEventListener('click', () => {
-    document.querySelectorAll('.annotate-text .hl').forEach(h => h.classList.remove('active'));
-    hl.classList.add('active');
-    const hint = document.getElementById('annotateHint');
-    hint.textContent = '📝 ' + hl.dataset.hint;
-    hint.className = 'annotate-hint show';
+// --- Navigation ---
+const navItems = document.querySelectorAll('.nav-item');
+function switchSection(target) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  navItems.forEach(n => n.classList.remove('active'));
+  const sec = document.getElementById('section-' + target);
+  if (sec) sec.classList.add('active');
+  navItems.forEach(n => {
+    if (n.dataset.target === target) n.classList.add('active');
   });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  updateProgress();
+}
+navItems.forEach(item => {
+  item.addEventListener('click', () => switchSection(item.dataset.target));
 });
 
-// Drag & Drop Sort
-(function initSort() {
-  const list = document.getElementById('sortList');
-  if (!list) return;
-  let dragItem = null;
-  list.querySelectorAll('.sortable-item').forEach(item => {
-    item.addEventListener('dragstart', () => { dragItem = item; setTimeout(() => item.classList.add('dragging'), 0); });
-    item.addEventListener('dragend', () => { item.classList.remove('dragging'); dragItem = null; });
-    item.addEventListener('dragover', e => { e.preventDefault(); if (dragItem && dragItem !== item) list.insertBefore(dragItem, item); });
-    // Touch support
-    item.addEventListener('pointerdown', e => { item.style.cursor = 'grabbing'; });
-    item.addEventListener('pointerup', e => { item.style.cursor = 'grab'; });
-  });
-})();
+// --- Quiz System ---
+let quizAnswers = {};
+let postTestScore = 0;
+let postTestTotal = 0;
 
-function checkSort() {
-  const items = document.querySelectorAll('#sortList .sortable-item');
-  let correct = 0;
-  items.forEach((item, idx) => {
-    item.classList.remove('correct-order', 'wrong-order');
-    if (parseInt(item.dataset.order) === idx + 1) {
-      item.classList.add('correct-order');
-      correct++;
+function selectOpt(el, qId) {
+  const container = el.closest('.quiz-options');
+  container.querySelectorAll('.quiz-option').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  quizAnswers[qId] = el.dataset.opt;
+  const fb = document.getElementById('feedback-' + qId);
+  if (fb) { fb.classList.remove('show', 'correct', 'wrong'); }
+}
+
+function checkQuiz(qId, moduleId) {
+  const container = document.querySelector(`[data-q="${qId}"]`);
+  if (!container) return;
+  const correct = container.dataset.correct;
+  const selected = quizAnswers[qId];
+  const fb = document.getElementById('feedback-' + qId);
+  const isCorrect = selected === correct;
+
+  // Update mastery
+  const nodeId = 'history-' + moduleId + '-' + qId;
+  TeachAnyAdaptive.updateMastery(nodeId, isCorrect, 2);
+
+  // Show feedback
+  if (fb) {
+    fb.classList.add('show');
+    if (isCorrect) {
+      fb.classList.add('correct');
+      fb.innerHTML = '✅ 正确！';
     } else {
-      item.classList.add('wrong-order');
+      fb.classList.add('wrong');
+      fb.innerHTML = '❌ 错误。正确答案是 <strong>' + correct + '</strong>。';
     }
-  });
-  TeachAnyAdaptive.updateMastery('erta-stories', correct === 5, 3);
-  if (correct === 5) alert('✅ 排序完全正确！你已掌握各篇目的人生阶段对应关系。');
-  else alert(`你排对了 ${correct}/5 篇。正确顺序：百草园→父亲的病→琐记→藤野先生→范爱农`);
-}
-
-// Rubric toggle
-function showRubric() {
-  const p = document.getElementById('rubricPanel');
-  p.style.display = p.style.display === 'none' ? 'block' : 'none';
-}
-
-// Scroll progress
-(function initScroll() {
-  window.addEventListener('scroll', () => {
-    const st = window.scrollY, dh = document.documentElement.scrollHeight - window.innerHeight;
-    const pct = Math.min(100, Math.max(0, Math.round(st/dh*100)));
-    TeachAnyProgress.updateNavProgress(pct);
-  }, {passive:true});
-})();
-
-// Init
-(function initAll() {
-  TeachAnyProgress.updateGlobalStats();
-  const CID = document.querySelector('meta[name="course-id"]')?.content || 'unknown';
-  TeachAnyProgress.restoreScrollPosition(CID);
-  let st; window.addEventListener('scroll', () => { clearTimeout(st); st = setTimeout(() => TeachAnyProgress.saveScrollPosition(CID), 500); }, {passive:true});
-  setInterval(() => TeachAnyProgress.recordTime(CID, 30), 30000);
-  const progress = TeachAnyProgress.getProgress(CID);
-  if (progress.completionPercent > 0 && progress.completionPercent < 100) {
-    const banner = document.createElement('div');
-    banner.style.cssText = 'position:fixed;top:56px;left:50%;transform:translateX(-50%);z-index:999;background:#fff;border:1px solid var(--border);border-radius:10px;padding:10px 20px;color:var(--text);font-size:13px;display:flex;align-items:center;gap:14px;box-shadow:0 4px 16px rgba(0,0,0,.08);';
-    banner.innerHTML = `<span>📚 欢迎回来！你已完成 ${progress.completionPercent}% 的学习。</span><button onclick="this.parentElement.remove()" style="background:var(--primary);color:#fff;border:none;padding:5px 14px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600;">继续学习</button>`;
-    document.body.appendChild(banner);
-    setTimeout(() => banner.remove(), 8000);
   }
+
+  // Color options
+  container.querySelectorAll('.quiz-option').forEach(o => {
+    o.classList.remove('correct', 'wrong');
+    if (o.dataset.opt === correct) o.classList.add('correct');
+    else if (o.classList.contains('selected') && !isCorrect) o.classList.add('wrong');
+  });
+
+  // Complete module
+  TeachAnyProgress.completeModule('history-sanguo-sui-tang', moduleId, { score: isCorrect ? 1 : 0, totalQuestions: 1, bloomLevel: 2 });
+  updateProgress();
+}
+
+function checkPreTest() {
+  ['pre1', 'pre2', 'pre3'].forEach(q => {
+    const container = document.querySelector(`[data-q="${q}"]`);
+    if (!container) return;
+    const correct = container.dataset.correct;
+    const selected = quizAnswers[q];
+    const fb = document.getElementById('feedback-' + q);
+    if (!fb) return;
+    if (selected === correct) {
+      fb.classList.add('show', 'correct');
+      fb.innerHTML = '✅ 正确！';
+    } else {
+      fb.classList.add('show', 'wrong');
+      fb.innerHTML = '❌ 错误。正确答案是 <strong>' + correct + '</strong>。';
+    }
+    container.querySelectorAll('.quiz-option').forEach(o => {
+      if (o.dataset.opt === correct) o.classList.add('correct');
+      else if (o.classList.contains('selected')) o.classList.add('wrong');
+    });
+  });
+}
+
+// --- Timeline Sortable ---
+function initSortable(listId) {
+  const list = document.getElementById(listId);
+  if (!list) return;
+  let dragged = null;
+
+  list.querySelectorAll('.sortable-item').forEach(item => {
+    item.addEventListener('dragstart', e => {
+      dragged = item;
+      setTimeout(() => item.classList.add('dragging'), 0);
+    });
+    item.addEventListener('dragend', () => {
+      if (dragged) dragged.classList.remove('dragging');
+      dragged = null;
+    });
+    item.addEventListener('dragover', e => {
+      e.preventDefault();
+      const after = getDragAfterElement(list, e.clientY);
+      if (after === null) list.appendChild(item);
+      else list.insertBefore(item, after);
+    });
+  });
+
+  function getDragAfterElement(container, y) {
+    const els = [...container.querySelectorAll('.sortable-item:not(.dragging)')];
+    return els.reduce((closest, child) => {
+      const box = child.getBoundingClientRect();
+      const offset = y - box.top - box.height / 2;
+      if (offset < 0 && offset > closest.offset) return { offset, element: child };
+      else return closest;
+    }, { offset: Number.NEGATIVE_INFINITY }).element;
+  }
+}
+
+function checkTimelineSort() {
+  const list = document.getElementById('sortableTimeline');
+  if (!list) return;
+  const items = [...list.querySelectorAll('.sortable-item')];
+  // Correct order: 2(三国)→5(西晋)→6(东晋)→4(南北朝)→1(隋)→3(唐)
+  const correctOrder = ['2', '5', '6', '4', '1', '3'];
+  const currentOrder = items.map(it => it.dataset.order);
+  const isCorrect = JSON.stringify(currentOrder) === JSON.stringify(correctOrder);
+
+  items.forEach((it, i) => {
+    it.classList.remove('correct', 'wrong');
+    if (isCorrect) it.classList.add('correct');
+    else if (it.dataset.order === correctOrder[i]) it.classList.add('correct');
+    else it.classList.add('wrong');
+  });
+
+  const fb = document.getElementById('feedback-timeline');
+  if (fb) {
+    fb.classList.add('show');
+    if (isCorrect) {
+      fb.classList.add('correct');
+      fb.innerHTML = '🎉 完全正确！正确的顺序是：三国→西晋→东晋→南北朝→隋朝→唐朝（220年→907年）';
+      TeachAnyAdaptive.updateMastery('history-timeline-sort', true, 3);
+    } else {
+      fb.classList.add('wrong');
+      fb.innerHTML = '❌ 顺序不对。提示：从220年到907年，按时间先后排列。红色的是错误项，绿色的是正确位置的项。';
+    }
+  }
+  TeachAnyProgress.completeModule('history-sanguo-sui-tang', 'timeline', { score: isCorrect ? 1 : 0, totalQuestions: 1, bloomLevel: 3 });
+  updateProgress();
+}
+
+// --- Post Test ---
+let postTestStarted = false;
+
+function startPostTest() {
+  document.getElementById('posttest-questions').style.display = 'block';
+  postTestStarted = true;
+  document.getElementById('pt-q1').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function submitPostTest() {
+  let score = 0;
+  let total = 2; // Q1 and Q2 only
+
+  ['pt1', 'pt2'].forEach(q => {
+    const container = document.querySelector(`[data-q="${q}"]`);
+    if (!container) return;
+    const correct = container.dataset.correct;
+    const selected = quizAnswers[q];
+    const fb = document.getElementById('feedback-' + q);
+    if (selected === correct) { score++; container.querySelectorAll('.quiz-option').forEach(o => { if (o.dataset.opt === correct) o.classList.add('correct'); }); }
+    else { container.querySelectorAll('.quiz-option').forEach(o => { if (o.dataset.opt === correct) o.classList.add('correct'); else if (o.classList.contains('selected')) o.classList.add('wrong'); }); }
+    if (fb) { fb.classList.add('show'); fb.classList.add(selected === correct ? 'correct' : 'wrong'); fb.innerHTML = selected === correct ? '✅ 正确！' : '❌ 错误，正确答案是 <strong>' + correct + '</strong>。'; }
+  });
+
+  // Check sort
+  const list = document.getElementById('sortablePT');
+  if (list) {
+    const items = [...list.querySelectorAll('.sortable-item')];
+    const correctOrder = ['c', 'e', 'b', 'd', 'a', 'f'];
+    const currentOrder = items.map(it => it.dataset.order);
+    const sortCorrect = JSON.stringify(currentOrder) === JSON.stringify(correctOrder);
+    const fb = document.getElementById('feedback-pt-sort');
+    if (fb) {
+      fb.classList.add('show');
+      if (sortCorrect) { fb.classList.add('correct'); fb.innerHTML = '✅ 排序完全正确！'; score++; }
+      else { fb.classList.add('wrong'); fb.classList.add('show'); fb.innerHTML = '❌ 排序错误，正确顺序：三国→西晋→东晋→南北朝→唐朝→隋朝。'; }
+    }
+    total++;
+  }
+
+  postTestScore = score;
+  postTestTotal = total;
+
+  const pct = Math.round((score / total) * 100);
+  const circle = document.getElementById('scoreCircle');
+  circle.style.background = pct >= 80 ? '#d1fae5' : pct >= 60 ? '#fef3c7' : '#fee2e2';
+  circle.style.color = pct >= 80 ? '#065f46' : pct >= 60 ? '#92400e' : '#991b1b';
+  document.getElementById('scoreNum').textContent = pct + '%';
+  document.getElementById('scoreMsg').textContent = pct >= 80 ? '🏆 优秀！你已掌握本课核心内容！' : pct >= 60 ? '👍 不错，继续加油！' : '💪 建议回顾各模块再试一次！';
+  document.getElementById('scoreDetails').innerHTML = `<p style="font-size:14px;color:var(--text-secondary);">共 ${total} 题，答对 ${score} 题</p>`;
+
+  document.getElementById('posttest-questions').style.display = 'none';
+  document.getElementById('posttest-results').style.display = 'block';
+
+  // Mark posttest complete
+  TeachAnyAdaptive.updateMastery('history-sanguo-sui-tang', pct >= 60, 4);
+  TeachAnyProgress.completeModule('history-sanguo-sui-tang', 'posttest', { score, totalQuestions: total, bloomLevel: 4 });
+  updateProgress();
+}
+
+function completePostTest() {
+  submitPostTest();
+}
+
+// --- Progress ---
+function updateProgress() {
+  const progress = TeachAnyProgress.getProgress('history-sanguo-sui-tang');
+  const pct = progress.completionPercent || 0;
+  document.getElementById('progressText').textContent = '已完成 ' + pct + '%';
+}
+
+// --- Init ---
+(function init() {
+  const COURSE_ID = 'history-sanguo-sui-tang';
+  TeachAnyProgress.restoreScrollPosition(COURSE_ID);
+  let scrollTimer;
+  window.addEventListener('scroll', () => {
+    clearTimeout(scrollTimer);
+    scrollTimer = setTimeout(() => TeachAnyProgress.saveScrollPosition(COURSE_ID), 500);
+  });
+  TeachAnyProgress.updateGlobalStats();
+
+  // Render streak
+  const stats = TeachAnyProgress.getGlobalStats();
+  document.getElementById('streak-count').textContent = stats.streak || 0;
+
+  // Init sortable lists
+  initSortable('sortableTimeline');
+  initSortable('sortablePT');
+
+  updateProgress();
 })();
 </script>
-
-<!-- ===== SPACED REPETITION ===== -->
-<script>
-const TeachAnySR = (() => {
-  const KEY = 'teachany_review';
-  function getData(){try{return JSON.parse(localStorage.getItem(KEY)||'{}');}catch(e){return{}}}
-  function save(d){localStorage.setItem(KEY,JSON.stringify(d));}
-  function addToReview(id,name,url){const d=getData();if(!d[id]){d[id]={name,url,interval:1,easeFactor:2.5,repetitions:0,nextReview:Date.now()+86400000,lastReview:Date.now()};save(d);}}
-  function recordReview(id,q){const d=getData(),c=d[id];if(!c)return;if(q>=3){c.repetitions===0?c.interval=1:c.repetitions===1?c.interval=3:c.interval=Math.round(c.interval*c.easeFactor);c.repetitions++;}else{c.repetitions=0;c.interval=1;}c.easeFactor=Math.max(1.3,c.easeFactor+0.1-(5-q)*(0.08+(5-q)*0.02));c.nextReview=Date.now()+c.interval*86400000;c.lastReview=Date.now();c.quality=q;save(d);return c;}
-  return{addToReview,recordReview,getData};
-})();
-</script>
-
-<!-- ===== ACHIEVEMENTS ===== -->
-<script>
-const TeachAnyAchievements = (()=>{
-  const KEY='teachany_achievements';
-  const DEFS={
-    'first-lesson':{name:'First Step',icon:'🌱',desc:'Complete your first module'},
-    'perfect-score':{name:'Perfect Score',icon:'⭐',desc:'Score 100% on any quiz'},
-    'streak-3':{name:'On a Roll',icon:'🔥',desc:'3-day learning streak'},
-    'deep-thinker':{name:'Deep Thinker',icon:'🧠',desc:'Answer a Bloom Level 5 question correctly'}
-  };
-  function get(){try{return JSON.parse(localStorage.getItem(KEY)||'{}');}catch(e){return{};}}
-  function save(d){localStorage.setItem(KEY,JSON.stringify(d));}
-  function award(id){const d=get();if(d[id])return false;d[id]={earnedAt:Date.now()};save(d);showToast(id);return true;}
-  function showToast(bid){const def=DEFS[bid];if(!def)return;const t=document.createElement('div');t.style.cssText='position:fixed;top:20px;right:-400px;z-index:10000;display:flex;align-items:center;gap:12px;padding:14px 22px;border-radius:12px;background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#1e293b;box-shadow:0 8px 28px rgba(251,191,36,.4);transition:right .4s cubic-bezier(.34,1.56,.64,1);font-family:system-ui,sans-serif;';t.innerHTML=`<div style="font-size:30px">${def.icon}</div><div><strong>🎉 Achievement Unlocked!</strong><br><span style="font-size:16px;font-weight:700">${def.name}</span><br><small style="opacity:.7">${def.desc}</small></div>`;document.body.appendChild(t);requestAnimationFrame(()=>t.style.right='20px');setTimeout(()=>{t.style.right='-400px';setTimeout(()=>t.remove(),300);},3500);}
-  function checkAndAward(cid,nid){const stats=TeachAnyProgress.getGlobalStats();const mastery=TeachAnyAdaptive.getMastery();let total=0;for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k?.startsWith('teachany_progress_')){try{const p=JSON.parse(localStorage.getItem(k));total+=Object.values(p.modules||{}).filter(m=>m.completed).length;}catch(e){}}}if(total>=1)award('first-lesson');if(stats.streak>=3)award('streak-3');if(mastery[nid]?.bloomMax>=5)award('deep-thinker');if(postTestCompleted===4&&postTestCorrect===4)award('perfect-score');}
-  return{award,checkAndAward,get,DEFS};
-})();
-</script>
-
 </body>
 </html>

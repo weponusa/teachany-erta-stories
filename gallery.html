@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TeachAny 课件 Gallery</title>
+<meta name="description" content="TeachAny K-12 互动课件展示">
+<style>
+:root {
+  --bg: #0f172a;
+  --card: rgba(30, 41, 59, 0.65);
+  --primary: #3b82f6;
+  --secondary: #06b6d4;
+  --accent: #f59e0b;
+  --text: #e2e8f0;
+  --muted: #94a3b8;
+  --border: rgba(148,163,184,0.15);
+  --radius: 14px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  line-height: 1.7;
+}
+header {
+  text-align: center;
+  padding: 48px 20px 32px;
+  background: linear-gradient(135deg, rgba(59,130,246,0.12), rgba(6,182,212,0.08));
+  border-bottom: 1px solid var(--border);
+}
+header h1 {
+  font-size: 2.2rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #60a5fa, #06b6d4);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 8px;
+}
+header p { color: var(--muted); font-size: 1rem; }
+.stats {
+  display: flex; justify-content: center; gap: 24px;
+  margin-top: 20px; flex-wrap: wrap;
+}
+.stats span {
+  background: var(--card); backdrop-filter: blur(10px);
+  padding: 8px 18px; border-radius: 20px;
+  font-size: 0.85rem; color: var(--muted);
+  border: 1px solid var(--border);
+}
+.stats strong { color: var(--accent); }
+
+/* Filter bar */
+.filter-bar {
+  display: flex; justify-content: center; gap: 8px;
+  padding: 20px; flex-wrap: wrap;
+}
+.filter-btn {
+  padding: 6px 16px; border-radius: 20px;
+  border: 1px solid var(--border);
+  background: transparent; color: var(--muted);
+  cursor: pointer; font-size: 0.85rem;
+  transition: all 0.2s;
+}
+.filter-btn:hover, .filter-btn.active {
+  background: rgba(59,130,246,0.2);
+  color: #60a5fa;
+  border-color: rgba(59,130,246,0.4);
+}
+
+/* Grid */
+.gallery {
+  max-width: 1200px; margin: 0 auto;
+  padding: 0 20px 60px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+}
+.card {
+  background: var(--card);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  transition: transform 0.2s, border-color 0.2s;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+.card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(59,130,246,0.4);
+}
+.card-header {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 12px;
+}
+.card-emoji { font-size: 2rem; }
+.card-title { font-size: 1.15rem; font-weight: 700; }
+.card-subtitle { font-size: 0.8rem; color: var(--muted); margin-top: 2px; }
+.card-desc {
+  font-size: 0.88rem; color: var(--muted);
+  margin-bottom: 14px; line-height: 1.6;
+  display: -webkit-box; -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical; overflow: hidden;
+}
+.card-meta {
+  display: flex; gap: 12px; align-items: center;
+  font-size: 0.8rem; color: var(--muted);
+  margin-bottom: 12px; flex-wrap: wrap;
+}
+.card-meta span { display: flex; align-items: center; gap: 4px; }
+.tags { display: flex; gap: 6px; flex-wrap: wrap; }
+.tag {
+  padding: 3px 10px; border-radius: 12px;
+  font-size: 0.72rem; font-weight: 500;
+}
+.tag-blue { background: rgba(59,130,246,0.15); color: #60a5fa; }
+.tag-purple { background: rgba(139,92,246,0.15); color: #a78bfa; }
+.tag-green { background: rgba(34,197,94,0.15); color: #4ade80; }
+.tag-yellow { background: rgba(245,158,11,0.15); color: #fbbf24; }
+.tag-cyan { background: rgba(6,182,212,0.15); color: #22d3ee; }
+.tag-red { background: rgba(239,68,68,0.15); color: #f87171; }
+.tag-pink { background: rgba(236,72,153,0.15); color: #f472b6; }
+.card-footer {
+  display: flex; justify-content: space-between;
+  align-items: center; margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+.btn-open {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 18px; border-radius: 10px;
+  background: rgba(59,130,246,0.2); color: #60a5fa;
+  text-decoration: none; font-size: 0.85rem; font-weight: 600;
+  transition: background 0.2s;
+}
+.btn-open:hover { background: rgba(59,130,246,0.35); }
+.difficulty { font-size: 0.8rem; color: var(--accent); }
+
+/* Empty state */
+.empty {
+  text-align: center; padding: 60px 20px;
+  color: var(--muted); font-size: 1.1rem;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  header h1 { font-size: 1.6rem; }
+  .gallery { grid-template-columns: 1fr; }
+  .card { padding: 18px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>📚 TeachAny Gallery</h1>
+  <p>K-12 互动课件展示 · 零依赖单文件 HTML · 开源免费</p>
+  <div class="stats" id="stats"></div>
+</header>
+
+<div class="filter-bar" id="filterBar"></div>
+
+<div class="gallery" id="gallery"></div>
+
+<script>
+const REGISTRY_PATH = './course-registry.json';
+
+// Subject display config
+const SUBJECT_MAP = {
+  math: { label: '数学', color: 'tag-blue', icon: '📐' },
+  biology: { label: '生物', color: 'tag-green', icon: '🌿' },
+  history: { label: '历史', color: 'tag-red', icon: '🏛️' },
+  physics: { label: '物理', color: 'tag-cyan', icon: '⚖️' },
+  geography: { label: '地理', color: 'tag-yellow', icon: '🌍' },
+  chemistry: { label: '化学', color: 'tag-purple', icon: '🧪' },
+  chinese: { label: '语文', color: 'tag-pink', icon: '📖' },
+};
+
+let courses = [];
+let activeFilter = 'all';
+
+async function loadRegistry() {
+  try {
+    const res = await fetch(REGISTRY_PATH);
+    if (!res.ok) throw new Error('Registry not found');
+    const data = await res.json();
+    courses = data.courses || [];
+    renderStats();
+    renderFilters();
+    renderGallery();
+  } catch (e) {
+    document.getElementById('gallery').innerHTML =
+      '<div class="empty">⚠️ 无法加载 course-registry.json<br><small>请确保文件在同一目录下</small></div>';
+  }
+}
+
+function renderStats() {
+  const subjects = new Set(courses.map(c => c.subject));
+  const totalDuration = courses.reduce((s, c) => s + parseInt(c.duration) || 0, 0);
+  document.getElementById('stats').innerHTML = `
+    <span>📦 <strong>${courses.length}</strong> 门课件</span>
+    <span>📚 <strong>${subjects.size}</strong> 个学科</span>
+    <span>⏱️ <strong>~${totalDuration}</strong> 分钟</span>
+  `;
+}
+
+function renderFilters() {
+  const subjects = [...new Set(courses.map(c => c.subject))];
+  const bar = document.getElementById('filterBar');
+  bar.innerHTML = `<button class="filter-btn active" data-subject="all">全部</button>` +
+    subjects.map(s => {
+      const cfg = SUBJECT_MAP[s] || { label: s, color: '' };
+      return `<button class="filter-btn" data-subject="${s}">${cfg.icon || ''} ${cfg.label || s}</button>`;
+    }).join('');
+
+  bar.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      bar.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeFilter = btn.dataset.subject;
+      renderGallery();
+    });
+  });
+}
+
+function renderGallery() {
+  const filtered = activeFilter === 'all'
+    ? courses
+    : courses.filter(c => c.subject === activeFilter);
+
+  if (filtered.length === 0) {
+    document.getElementById('gallery').innerHTML =
+      '<div class="empty">该学科暂无课件</div>';
+    return;
+  }
+
+  document.getElementById('gallery').innerHTML = filtered.map(c => {
+    const sub = SUBJECT_MAP[c.subject] || { label: c.subject, color: 'tag-blue' };
+    const diffStars = '⭐'.repeat(c.difficulty || 3);
+    const tagHtml = (c.tags || []).map((t, i) => {
+      const cls = (c.tag_colors || [])[i] || 'tag-blue';
+      return `<span class="tag ${cls}">${t}</span>`;
+    }).join('');
+
+    const openUrl = c.download_url || c.path || '#';
+    const openLabel = c.source === 'releases' ? '下载课件' : '打开课件';
+
+    return `
+      <div class="card" onclick="window.open('${openUrl}','_blank')">
+        <div class="card-header">
+          <span class="card-emoji">${c.emoji || sub.icon}</span>
+          <div>
+            <div class="card-title">${c.name}</div>
+            <div class="card-subtitle">${c.name_en || ''}</div>
+          </div>
+        </div>
+        <div class="card-desc">${c.description_zh || c.description}</div>
+        <div class="card-meta">
+          <span>${sub.icon} ${sub.label}</span>
+          <span>📅 ${c.grade ? 'G' + c.grade : ''}</span>
+          <span>⏱️ ${c.duration || ''}</span>
+          <span>📝 ${c.lines || ''}</span>
+          ${c.has_tts ? '<span>🔊 TTS</span>' : ''}
+          ${c.has_video ? '<span>🎬 视频</span>' : ''}
+        </div>
+        <div class="tags">${tagHtml}</div>
+        <div class="card-footer">
+          <a class="btn-open" href="${openUrl}" target="_blank" onclick="event.stopPropagation()">
+            ${openLabel} →
+          </a>
+          <span class="difficulty">${diffStars}</span>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+loadRegistry();
+</script>
+</body>
+</html>

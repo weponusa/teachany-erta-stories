@@ -167,7 +167,8 @@ header p { color: var(--muted); font-size: 1rem; }
 <div class="gallery" id="gallery"></div>
 
 <script>
-const REGISTRY_PATH = './course-registry.json';
+// Try remote registry first, fallback to embedded data
+const REMOTE_REGISTRY = 'https://weponusa.github.io/teachany/registry.json';
 
 // Subject display config
 const SUBJECT_MAP = {
@@ -180,22 +181,39 @@ const SUBJECT_MAP = {
   chinese: { label: '语文', color: 'tag-pink', icon: '📖' },
 };
 
+// Embedded fallback — at minimum show this courseware
+const FALLBACK_COURSES = [{
+  id: 'chinese-erta-stories',
+  name: '朝花夕拾 · 名著导读',
+  name_en: 'Dawn Blossoms Plucked at Dusk',
+  subject: 'chinese', grade: 7, domain: 'reading',
+  emoji: '📖',
+  description: 'Interactive courseware for Lu Xun\'s only memoir essay collection — dual-perspective reading method.',
+  description_zh: '初中七年级语文名著导读：朝花夕拾 — 十篇散文速览、人物画廊、核心手法、双视角叙事、批注实战',
+  tags: ['语文','名著导读','鲁迅','整本书阅读'],
+  tag_colors: ['tag-pink','tag-green','tag-blue','tag-yellow'],
+  difficulty: 3, duration: '45', lines: '1,090+',
+  has_tts: true, has_video: false,
+  url: 'https://weponusa.github.io/teachany-erta-stories/',
+  source: 'external'
+}];
+
 let courses = [];
 let activeFilter = 'all';
 
 async function loadRegistry() {
   try {
-    const res = await fetch(REGISTRY_PATH);
-    if (!res.ok) throw new Error('Registry not found');
+    const res = await fetch(REMOTE_REGISTRY);
+    if (!res.ok) throw new Error('Remote registry not found');
     const data = await res.json();
     courses = data.courses || [];
-    renderStats();
-    renderFilters();
-    renderGallery();
   } catch (e) {
-    document.getElementById('gallery').innerHTML =
-      '<div class="empty">⚠️ 无法加载 course-registry.json<br><small>请确保文件在同一目录下</small></div>';
+    // Fallback: show embedded courseware data
+    courses = FALLBACK_COURSES;
   }
+  renderStats();
+  renderFilters();
+  renderGallery();
 }
 
 function renderStats() {
@@ -246,7 +264,7 @@ function renderGallery() {
       return `<span class="tag ${cls}">${t}</span>`;
     }).join('');
 
-    const openUrl = c.download_url || c.path || '#';
+    const openUrl = c.url || c.download_url || c.path || '#';
     const openLabel = c.source === 'releases' ? '下载课件' : '打开课件';
 
     return `

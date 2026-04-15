@@ -1,6 +1,6 @@
 {
-  "version": "2.2",
-  "updated_at": "2026-04-14T16:18:42.456711Z",
+  "version": "2.3",
+  "updated_at": "2026-04-15T12:55:00Z",
   "repo": "weponusa/teachany",
   "releases_base": "https://github.com/weponusa/teachany/releases/download",
   "examples_base": "./examples",
@@ -542,12 +542,14 @@
       "has_video": false,
       "has_en": false,
       "file_count": 1,
-      "source": "releases",
+      "source": "github-pages",
       "local_path": "teachany-erta-stories",
-      "download_url": "https://github.com/weponusa/teachany-erta-stories",
-      "release_tag": "courseware-v20260414",
+      "download_url": "https://weponusa.github.io/teachany-erta-stories/index.html",
+      "gallery_url": "https://weponusa.github.io/teachany-erta-stories/gallery.html",
+      "knowledge_map_url": "https://weponusa.github.io/teachany-erta-stories/knowledge-map.html",
+      "release_tag": "courseware-v20260415",
       "created": "2026-04-14",
-      "updated": "2026-04-14"
+      "updated": "2026-04-15"
     }
   ]
 }
